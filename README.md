@@ -1,4 +1,4 @@
-# LeRep
+# Lerep
 
 A World of Warcraft: Forever addon that finds the cheapest gold path to a
 reputation rank and an amount of Merchant's Favor with the trade factions:
@@ -12,17 +12,17 @@ Status: 0.1.0, built and not yet tried in game ([TESTING.md](TESTING.md) is the 
 ## Getting started
 
 Players: unzip the release into `World of Warcraft\_forever_\Interface\AddOns\`, so
-there's an `AddOns\LeRep` folder, and install Auctionator.
+there's an `AddOns\Lerep` folder, and install Auctionator.
 
-From the repo, on Windows: clone it (`git clone https://github.com/addohm/LeRep.git`) and run
-`tools\install_forever.cmd`, which copies `LeRep` into the game (DEPLOY.md has the details).
+From the repo, on Windows: clone it (`git clone https://github.com/addohm/lerep.git`) and run
+`tools\install_forever.cmd`, which copies `Lerep` into the game (DEPLOY.md has the details).
 The tests run with `.venv/bin/python tests/run_tests.py` (set up with
 `python3 -m venv .venv && .venv/bin/pip install lupa`).
 
 ## Usage
 
 `/lerep` (or the minimap button) opens the window. It needs Auctionator:
-scan the auction house so LeRep has writ, crate and material prices.
+scan the auction house so Lerep has writ, crate and material prices.
 
 - **Rank, Favor, Combined:** three plans. Rank reaches a rank, Favor earns
   Merchant's Favor for a reward, Combined does both at once. The top bar sets
@@ -32,22 +32,22 @@ scan the auction house so LeRep has writ, crate and material prices.
   step to see it in the box; hover for detail.
 - **Shopping:** what today's steps need, for the plan tab you opened last:
   crafted items broken down into materials, less what you hold. Send to
-  Auctionator makes a "LeRep" shopping list.
+  Auctionator makes a "Lerep" shopping list.
 - **Options:** the targets, your Legacy perks (Diplomat, Performance Bonus),
-  when a writ counts as on sale, the Coin Pouch, step alerts, and what LeRep
+  when a writ counts as on sale, the Coin Pouch, step alerts, and what Lerep
   has recorded.
 - `/lerep status` shows your faction, standing, Favor and price sources;
   `/lerep help` lists the commands.
 
 Writs give rep (each once a day), filled crates give Favor, and a Forged
 Delivery Receipt (15 Favor, from Friendly) on an empty crate gives 50 rep.
-LeRep learns as you play: the recipes you know (open your profession
+Lerep learns as you play: the recipes you know (open your profession
 windows), the receipt's price, and what turn-ins and Coin Pouches really
 give.
 
 ## Credits
 
-LeRep's data (`LeRep/Data.lua`) is built from Forever's game data files and
+Lerep's data (`Lerep/Data.lua`) is built from Forever's game data files and
 from quest, NPC and vendor data from Efficient Games (https://efficient.games),
 licensed under CC BY 4.0
 ([github.com/JIVESCORP/eg-link-output-wowf](https://github.com/JIVESCORP/eg-link-output-wowf)).

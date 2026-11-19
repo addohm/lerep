@@ -1,4 +1,4 @@
--- LeRep: small helpers shared by the other files (from leprofit): safe calls, money text, item
+-- Lerep: small helpers shared by the other files (from leprofit): safe calls, money text, item
 -- names, icons, links and how many you hold.
 local _, ns = ...
 

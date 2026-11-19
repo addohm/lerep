@@ -6,7 +6,7 @@ build you tried (`/lerep help` shows it).
 
 ## Loading
 
-- [ ] LeRep is in the AddOns list with its notes, and isn't "out of date".
+- [ ] Lerep is in the AddOns list with its notes, and isn't "out of date".
 - [ ] `/lerep help` shows the version and build; no Lua errors on login (`/console scriptErrors 1`).
 - [ ] `/lerep status` names your side's faction, your standing and rep, your Merchant's Favor, and
       whether the Shipping Label is handed in. Check them against the game's reputation pane and
@@ -38,13 +38,13 @@ Scan the auction house with Auctionator first.
 - [ ] The heading names the plan tab you opened last.
 - [ ] Crafted items you know the recipe for are broken into materials (when cheaper); what you hold
       is taken off once.
-- [ ] Send to Auctionator makes a "LeRep" list in Auctionator's Shopping tab with the right
+- [ ] Send to Auctionator makes a "Lerep" list in Auctionator's Shopping tab with the right
       quantities; vendor items are left out and named in chat.
 
 ## Recording
 
 - [ ] At the scribe (Dianne Softstep / Kurvelk Shadowhoof), opening the vendor records the Forged
-      Delivery Receipt's Favor price (chat line; Options > What LeRep has seen).
+      Delivery Receipt's Favor price (chat line; Options > What Lerep has seen).
 - [ ] Handing in a writ with the Diplomat perk sets "More rep per turn-in" to your bonus.
 - [ ] Handing in a filled crate records its Favor (chat line; Options).
 - [ ] Opening a Coin Pouch records what it held (Options).

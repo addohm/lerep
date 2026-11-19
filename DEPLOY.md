@@ -1,6 +1,6 @@
-# Deploying LeRep
+# Deploying Lerep
 
-LeRep is a World of Warcraft addon: it runs inside the game client (WoW:
+Lerep is a World of Warcraft addon: it runs inside the game client (WoW:
 Forever, Interface 16001), and there's no server. Releases will be published
 on CurseForge and Wago, like leprofit's. Nothing is built yet.
 
@@ -8,14 +8,14 @@ on CurseForge and Wago, like leprofit's. Nothing is built yet.
 
 On the Windows test PC:
 
-1. Clone the repo anywhere: `git clone https://github.com/addohm/LeRep.git` (it needs your GitHub
+1. Clone the repo anywhere: `git clone https://github.com/addohm/lerep.git` (it needs your GitHub
    login if the repo is private).
 2. Open `tools\install_forever.cmd` and check `WOW` at the top: it's the client folder, by default
    `C:\Program Files (x86)\World of Warcraft\_forever_`, the live game.
-3. Run `tools\install_forever.cmd` from a terminal, then start the game and tick LeRep in the
+3. Run `tools\install_forever.cmd` from a terminal, then start the game and tick Lerep in the
    AddOns list.
 
-To install by hand instead, copy the `LeRep` folder (not the repo root) into
+To install by hand instead, copy the `Lerep` folder (not the repo root) into
 `<WoW>\_forever_\Interface\AddOns\`.
 
 ## Shipping a change
@@ -23,9 +23,9 @@ To install by hand instead, copy the `LeRep` folder (not the repo root) into
 1. Run the tests: `.venv/bin/python tests/run_tests.py`.
 2. Commit and push.
 3. On Windows, run `tools\install_forever.cmd`, then `/reload` (or restart the game if it says so).
-4. For a release: bump `## Version` in `LeRep/LeRep.toc`, move the CHANGELOG's Unreleased entries
+4. For a release: bump `## Version` in `Lerep/Lerep.toc`, move the CHANGELOG's Unreleased entries
    under the new version, and commit. Then `python3 tools/make_release.py` writes
-   `release/LeRep-<version>.zip` from the last commit (it refuses if `LeRep/` has uncommitted
+   `release/Lerep-<version>.zip` from the last commit (it refuses if `Lerep/` has uncommitted
    changes); commit the zip, tag (`git tag v0.1.0`) and push with `--tags`. Upload the zip to
    CurseForge and to Wago.
 
@@ -38,14 +38,16 @@ To install by hand instead, copy the `LeRep` folder (not the repo root) into
   rewritten (this copy's last commit isn't in it any more), it says so and prints the two commands
   that move the copy onto GitHub's: `git fetch origin --tags --force` and
   `git reset --hard origin/main` (they throw away commits and edits made only in the copy).
-- Mirrors `LeRep\` into `<WOW>\Interface\AddOns\LeRep\` (`robocopy /MIR`), creating it on the
+- Removes an installed `LeRep\` folder from builds before the rename (Windows ignores letter
+  case, so copying over it would keep the old spelling).
+- Mirrors `Lerep\` into `<WOW>\Interface\AddOns\Lerep\` (`robocopy /MIR`), creating it on the
   first run. If `WOW` itself doesn't exist it stops, since the path is probably wrong.
-- Writes the commit into the installed `LeRep\Build.lua`, so `/lerep help` shows
+- Writes the commit into the installed `Lerep\Build.lua`, so `/lerep help` shows
   `v<version> build <commit>`. "-dirty" means the copy included uncommitted changes.
-- Packs `LeRep-<version>.zip` on the desktop: `git archive` of the committed addon, without the
+- Packs `Lerep-<version>.zip` on the desktop: `git archive` of the committed addon, without the
   build stamp.
 - Says whether `/reload` is enough. WoW reads an addon's file list only when the game starts, so
-  when `LeRep.toc` changed you must restart the game.
+  when `Lerep.toc` changed you must restart the game.
 
 If creating or copying fails, the WoW folder may need the script to run as administrator. The
 script needs CRLF line endings to run reliably; `.gitattributes` makes git check it out that way.
@@ -54,21 +56,21 @@ script needs CRLF line endings to run reliably; `.gitattributes` makes git check
 
 `python3 tools/fetch_sources.py` downloads the newest Forever build's game
 data and every build of Efficient Games' player data into `.source/`; then
-`python3 tools/gen_data.py` rewrites `LeRep/Data.lua`. Check its summary line
+`python3 tools/gen_data.py` rewrites `Lerep/Data.lua`. Check its summary line
 (150 writs and 30 crates so far), run the tests, and commit the new
 `Data.lua`.
 
 ## Rolling back
 
-Install an older version: `git checkout <tag> -- LeRep` in the clone, copy the folder over the
-installed one, then `git checkout main -- LeRep` to return.
+Install an older version: `git checkout <tag> -- Lerep` in the clone, copy the folder over the
+installed one, then `git checkout main -- Lerep` to return.
 
 ## Configuration
 
 There are no secrets or environment settings. In-game settings are per character, in
-`WTF/Account/<account>/<realm>/<character>/SavedVariables/LeRep.lua`. Vendor prices and what LeRep
+`WTF/Account/<account>/<realm>/<character>/SavedVariables/Lerep.lua`. Vendor prices and what Lerep
 has seen (the receipt's price, crate Favor, Coin Pouches) are shared by your characters, in
-`WTF/Account/<account>/SavedVariables/LeRep.lua`.
+`WTF/Account/<account>/SavedVariables/Lerep.lua`.
 
 ## Troubleshooting
 

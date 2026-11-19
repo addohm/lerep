@@ -1,5 +1,5 @@
--- LeRep: the Options tab, built from leprofit's widgets: the targets, the day limit, your Legacy perks'
--- bonuses, prices, and what LeRep has recorded so far.
+-- Lerep: the Options tab, built from leprofit's widgets: the targets, the day limit, your Legacy perks'
+-- bonuses, prices, and what Lerep has recorded so far.
 local _, ns = ...
 
 local GREY = "|cff9d9d9d"
@@ -40,7 +40,7 @@ local function Build(panel)
 		{ { 0, "0%" }, { 2, "2%" }, { 4, "4%" }, { 6, "6%" }, { 8, "8%" }, { 10, "10%" } },
 		function() return ns.db.repBonus end,
 		function(v) ns.db.repBonus = v Changed() end,
-		{ tooltip = { "Diplomat", "2% more rep per rank. LeRep sets this itself when it sees how much rep a writ gives you." } }))
+		{ tooltip = { "Diplomat", "2% more rep per rank. Lerep sets this itself when it sees how much rep a writ gives you." } }))
 	stack:Add(UI.OptionSelect(panel, "Chance of double Favor (Performance Bonus)",
 		{ { 0, "0%" }, { 3, "3%" }, { 6, "6%" }, { 9, "9%" }, { 12, "12%" }, { 15, "15%" } },
 		function() return ns.db.favorBonus end,
@@ -56,7 +56,7 @@ local function Build(panel)
 	stack:Add(UI.OptionCheck(panel, "Take the Coin Pouch off a writ's cost",
 		function() return ns.db.usePouch end,
 		function(v) ns.db.usePouch = v Changed() end,
-		{ "Coin Pouch", "Each writ pays a Coin Pouch. Until you've opened some, LeRep uses a guess at what they hold." }))
+		{ "Coin Pouch", "Each writ pays a Coin Pouch. Until you've opened some, Lerep uses a guess at what they hold." }))
 
 	stack:Add(UI.OptionHeading(panel, "Other"))
 	stack:Add(UI.OptionCheck(panel, "Say in chat when a step is done",
@@ -67,7 +67,7 @@ local function Build(panel)
 		function() return not ns.db.minimap.hide end,
 		function(v) ns.Minimap.SetShown(v) end))
 
-	stack:Add(UI.OptionHeading(panel, "What LeRep has seen"))
+	stack:Add(UI.OptionHeading(panel, "What Lerep has seen"))
 	stack:Add(UI.OptionText(panel, function()
 		local seen, lines = ns.adb.seen, {}
 		local rf, rfSeen = ns.Faction.ReceiptFavor()

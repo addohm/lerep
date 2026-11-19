@@ -1,9 +1,9 @@
--- LeRep: settings, events and slash commands. Settings are per character (LeRepCharDB, ns.db); what
--- you record (vendor prices, what turn-ins really gave) is shared by your characters (LeRepDB,
+-- Lerep: settings, events and slash commands. Settings are per character (LerepCharDB, ns.db); what
+-- you record (vendor prices, what turn-ins really gave) is shared by your characters (LerepDB,
 -- ns.adb).
 local ADDON, ns = ...
 
-ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until LeRep has its own art
+ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until Lerep has its own art
 
 local DEFAULTS = {
 	targetStanding = 8,  -- the rank the plans aim for: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted
@@ -47,7 +47,7 @@ local function CopyDefaults(dst, src)
 end
 
 function ns.Print(msg)
-	print("|cffffd100LeRep|r: " .. msg)
+	print("|cffffd100Lerep|r: " .. msg)
 end
 
 function ns.Version()
@@ -90,9 +90,9 @@ for _, e in ipairs({ "BAG_UPDATE_DELAYED", "AUCTION_HOUSE_CLOSED", "UPDATE_FACTI
 end
 events:SetScript("OnEvent", function(_, event, arg)
 	if event == "ADDON_LOADED" and arg == ADDON then
-		LeRepCharDB = CopyDefaults(type(LeRepCharDB) == "table" and LeRepCharDB or {}, DEFAULTS)
-		LeRepDB = CopyDefaults(type(LeRepDB) == "table" and LeRepDB or {}, ACCOUNT_DEFAULTS)
-		ns.db, ns.adb = LeRepCharDB, LeRepDB
+		LerepCharDB = CopyDefaults(type(LerepCharDB) == "table" and LerepCharDB or {}, DEFAULTS)
+		LerepDB = CopyDefaults(type(LerepDB) == "table" and LerepDB or {}, ACCOUNT_DEFAULTS)
+		ns.db, ns.adb = LerepCharDB, LerepDB
 	elseif event == "PLAYER_LOGIN" then
 		if ns.Minimap then ns.Minimap.Init() end
 		ns.Changed()

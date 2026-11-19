@@ -1,11 +1,11 @@
--- LeRep: Send to Auctionator (from leprofit). Makes one "LeRep" shopping list from what's left to buy
+-- Lerep: Send to Auctionator (from leprofit). Makes one "Lerep" shopping list from what's left to buy
 -- for today's steps of the plan you followed last, leaving out what vendors sell.
 local ADDON, ns = ...
 
 local Shopping = {}
 ns.Shopping = Shopping
 
-Shopping.LIST_NAME = "LeRep"
+Shopping.LIST_NAME = "Lerep"
 
 local function AuctionatorAPI()
 	local A = rawget(_G, "Auctionator")

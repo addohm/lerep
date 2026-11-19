@@ -14,6 +14,6 @@ same.
 
 ## Access
 
-- Repo: GitHub `addohm/LeRep`, owned by addohm.
+- Repo: GitHub `addohm/lerep`, owned by addohm.
 - Claude's workspace pushes with a per-repo deploy key (`deploy-ws-LeRep`).
 - Only the owner pushes and releases (CurseForge and Wago).

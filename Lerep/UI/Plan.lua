@@ -1,4 +1,4 @@
--- LeRep: the Rank, Favor and Combined tabs. Each shows its targets in a top bar, your progress, the
+-- Lerep: the Rank, Favor and Combined tabs. Each shows its targets in a top bar, your progress, the
 -- current step (what to buy or craft, and where to hand it in), and the route: every step with
 -- what it gives and costs. Click a step in the route to see it in the step box; hover it for its
 -- detail. Opening one of these tabs makes it the plan Shopping and the step alerts follow.
@@ -353,7 +353,7 @@ local function MakePage(kind)
 			if kind == "favor" and plan.goal == 0 then
 				emptyText:SetText("Pick a Favor goal above: a reward, or an amount in Options.")
 			elseif plan.shortRep or plan.shortFavor then
-				emptyText:SetText(ORANGE .. "Nothing can be planned yet.|r Scan the auction house with Auctionator, so LeRep has writ and crate prices.")
+				emptyText:SetText(ORANGE .. "Nothing can be planned yet.|r Scan the auction house with Auctionator, so Lerep has writ and crate prices.")
 			else
 				emptyText:SetText(GREEN .. "You're there.|r Nothing left to do for this plan.")
 			end
