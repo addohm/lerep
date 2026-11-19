@@ -1,0 +1,7 @@
+# Downloaded source data tools/gen_data.py reads (never committed)
+/.source/
+
+# Python tooling and scratch
+.venv/
+.scratch/
+__pycache__/

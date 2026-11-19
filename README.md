@@ -6,7 +6,7 @@ the Azeroth Commerce Authority (Alliance) and Durotar Supply and Logistics
 (Horde). It tells you which writs to buy, which crates to fill, how many, and
 what it all costs, using your auction house prices.
 
-Status: designed, not built yet. The agreed design is in
+Status: being built (0.1.0); the data is in, the addon isn't yet. The agreed design is in
 [ROADMAP.md](ROADMAP.md).
 
 ## Getting started
@@ -25,8 +25,10 @@ with Send to Auctionator, and Options.
 
 ## Credits
 
-Turn-in data will include quest data from the EG Link dataset
-(JIVESCORP/eg-link-output-wowf), licensed CC BY 4.0.
+LeRep's data (`LeRep/Data.lua`) is built from Forever's game data files and
+from quest, NPC and vendor data from Efficient Games (https://efficient.games),
+licensed under CC BY 4.0
+([github.com/JIVESCORP/eg-link-output-wowf](https://github.com/JIVESCORP/eg-link-output-wowf)).
 
 ## Docs
 

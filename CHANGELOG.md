@@ -11,3 +11,7 @@ All notable changes to LeRep. The format follows
 - Standard docs: README, CLAUDE, CHANGELOG, DEPLOY, SECURITY and ROADMAP (2026-11-19).
 - Docs filled in with what's known so far, with TODO questions (2026-11-19).
 - The agreed design in ROADMAP.md: Rank, Favor and Combined plans (2026-11-19).
+- The data: `tools/fetch_sources.py` and `tools/gen_data.py` build
+  `LeRep/Data.lua` from Forever's game data and Efficient Games' player data:
+  150 writs, 30 crates with their bundles, 218 recipes behind writ items and
+  crafted bundles, vendor prices, Favor rewards and goals, the camps.

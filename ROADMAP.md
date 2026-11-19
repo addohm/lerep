@@ -7,6 +7,9 @@ change.
 
 - Standard docs (2026-11-19).
 - Design agreed (2026-11-19, below).
+- 0.1.0 step 1, the data (2026-11-19): 150 writs and 30 crates, matching an
+  independent list exactly. Only 3 writ customers are recorded so far; the
+  game marks the customer on your map anyway.
 
 ## Next
 
