@@ -3,7 +3,7 @@
 -- ns.adb).
 local ADDON, ns = ...
 
-ns.ICON = "Interface\\AddOns\\LeRep\\Media\\Icon" -- art/make_logo.py
+ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until LeRep has its own art
 
 local DEFAULTS = {
 	targetStanding = 8,  -- the rank the plans aim for: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted
@@ -69,14 +69,16 @@ function ns.Changed()
 	ns.Refresh()
 end
 
--- Many events can arrive at once (bags, prices, rep): redraw once, a moment later.
+-- Many events can arrive at once (bags, prices, rep): redraw once, a moment later. Once you've
+-- opened a plan this session, also check whether its first step got done (step alerts).
 local queued = false
 function ns.Refresh()
-	if queued or not ns.Window then return end
+	if queued then return end
 	queued = true
 	C_Timer.After(0.2, function()
 		queued = false
-		ns.Window.Refresh()
+		if ns.Window then ns.Window.Refresh() end
+		if ns.watching then ns.Planner.WatchSteps() end
 	end)
 end
 

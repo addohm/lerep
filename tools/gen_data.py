@@ -48,22 +48,23 @@ COIN_POUCH = {"Journeyman": 3500, "Expert": 8000, "Artisan": 15200}
 
 RECIPE_DEPTH = 3
 
-# The Favor goals the Options picker lists: itemID -> (Favor, gold copper, standing needed, what it is).
+# The Favor goals the Options picker lists: itemID -> (Favor, gold copper, standing needed, what it
+# is, side or None).
 # From guides and Wowhead (no vendor data yet); recorded vendor prices replace the Favor and copper.
 # Standing: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted; 0 = none.
 GOALS = {
-    262766: (6000, 0, 8, "Pack Kodo mount (needs level 60 and Journeyman Riding)"),
-    284664: (1500, 0, 7, "Minimule pet"),
-    270888: (1200, 0, 6, "Tradeskill Sign toy (Alliance)"),
-    270887: (1200, 0, 6, "Tradeskill Sign toy (Horde)"),
-    262765: (200, 50000, 8, "Azeroth Commerce Authority Tabard"),
-    262764: (200, 50000, 8, "Durotar Supply and Logistics Tabard"),
-    271621: (1000, 0, 0, "Alchemy Certification title (needs skill 300)"),
-    271622: (1000, 0, 0, "Blacksmithing Certification title (needs skill 300)"),
-    271624: (1000, 0, 0, "Enchanting Certification title (needs skill 300)"),
-    271625: (1000, 0, 0, "Engineering Certification title (needs skill 300)"),
-    271626: (1000, 0, 0, "Leatherworking Certification title (needs skill 300)"),
-    271627: (1000, 0, 0, "Tailoring Certification title (needs skill 300)"),
+    262766: (6000, 0, 8, "Pack Kodo mount (needs level 60 and Journeyman Riding)", None),
+    284664: (1500, 0, 7, "Minimule pet", None),
+    270888: (1200, 0, 6, "Tradeskill Sign toy", "Alliance"),
+    270887: (1200, 0, 6, "Tradeskill Sign toy", "Horde"),
+    262765: (200, 50000, 8, "Faction tabard", "Alliance"),
+    262764: (200, 50000, 8, "Faction tabard", "Horde"),
+    271621: (1000, 0, 0, "Alchemy Certification title (needs skill 300)", None),
+    271622: (1000, 0, 0, "Blacksmithing Certification title (needs skill 300)", None),
+    271624: (1000, 0, 0, "Enchanting Certification title (needs skill 300)", None),
+    271625: (1000, 0, 0, "Engineering Certification title (needs skill 300)", None),
+    271626: (1000, 0, 0, "Leatherworking Certification title (needs skill 300)", None),
+    271627: (1000, 0, 0, "Tailoring Certification title (needs skill 300)", None),
 }
 
 
@@ -294,10 +295,10 @@ def main():
     item_names = {i: name(i) for i in mentioned if name(i)}
 
     goals = {}
-    for i, (favor, copper, standing, what) in GOALS.items():
+    for i, (favor, copper, standing, what, side) in GOALS.items():
         if i in rewards:
             favor, copper = rewards[i]
-        goals[i] = (favor, copper, standing, what)
+        goals[i] = (favor, copper, standing, what, side)
     item_names.update({i: name(i) for i in goals if name(i)})
 
     write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, item_names)
@@ -399,11 +400,13 @@ def write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, 
         w(f"\t[{i}] = {{ {f}, {c} }},")
     w("}")
     w("")
-    w("-- The Favor goals Options lists: itemID = { favor, copper, standing needed (0 none), what it is }")
+    w("-- The Favor goals Options lists: itemID = { favor, copper, standing needed (0 none), what it is,")
+    w("-- side (nil: both) }")
     w("D.goals = {")
     for i in sorted(goals):
-        f, c, st, what = goals[i]
-        w(f"\t[{i}] = {{ {f}, {c}, {st}, {lua_str(what)} }},")
+        f, c, st, what, side = goals[i]
+        side_lua = f'"{side}"' if side else "nil"
+        w(f"\t[{i}] = {{ {f}, {c}, {st}, {lua_str(what)}, {side_lua} }},")
     w("}")
     w("")
     w("D.itemNames = {")

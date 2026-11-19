@@ -24,3 +24,6 @@ All notable changes to LeRep. The format follows
   Favor, finishing within a number of days (7 by default); writ items and
   crafted bundles at the cheaper of buying and crafting; the steps and
   today's shopping list.
+- The window: Rank, Favor and Combined tabs (targets, progress, the current
+  step and the route), Shopping with Send to Auctionator, Options; a minimap
+  button and the addon menu entry; step alerts in chat.

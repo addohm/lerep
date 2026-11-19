@@ -6,6 +6,7 @@
 ## SavedVariables: LeRepDB
 ## SavedVariablesPerCharacter: LeRepCharDB
 ## OptionalDeps: Auctionator, TradeSkillMaster
+## AddonCompartmentFunc: LeRep_OnAddonCompartmentClick
 
 Build.lua
 Data.lua
@@ -16,3 +17,11 @@ Faction.lua
 Recorder.lua
 Make.lua
 Planner.lua
+Shopping.lua
+
+UI\Widgets.lua
+UI\Window.lua
+UI\Plan.lua
+UI\Shopping.lua
+UI\Options.lua
+UI\Minimap.lua

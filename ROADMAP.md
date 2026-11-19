@@ -14,6 +14,9 @@ change.
   the recorder, tests.
 - 0.1.0 step 3, the planner (2026-11-19): the three plans, steps and
   shopping list, with make-vs-buy; tests for each plan.
+- 0.1.0 step 4, the window (2026-11-19): the three plan tabs, Shopping,
+  Options, minimap button, step alerts. A stock icon until the release
+  kit's art.
 
 ## Next
 

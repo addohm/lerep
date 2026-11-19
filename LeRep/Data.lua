@@ -745,20 +745,21 @@ D.rewards = {
 	[289560] = { 180, 0 },
 }
 
--- The Favor goals Options lists: itemID = { favor, copper, standing needed (0 none), what it is }
+-- The Favor goals Options lists: itemID = { favor, copper, standing needed (0 none), what it is,
+-- side (nil: both) }
 D.goals = {
-	[262764] = { 200, 50000, 8, "Durotar Supply and Logistics Tabard" },
-	[262765] = { 200, 50000, 8, "Azeroth Commerce Authority Tabard" },
-	[262766] = { 6000, 0, 8, "Pack Kodo mount (needs level 60 and Journeyman Riding)" },
-	[270887] = { 1200, 0, 6, "Tradeskill Sign toy (Horde)" },
-	[270888] = { 1200, 0, 6, "Tradeskill Sign toy (Alliance)" },
-	[271621] = { 1000, 0, 0, "Alchemy Certification title (needs skill 300)" },
-	[271622] = { 1000, 0, 0, "Blacksmithing Certification title (needs skill 300)" },
-	[271624] = { 1000, 0, 0, "Enchanting Certification title (needs skill 300)" },
-	[271625] = { 1000, 0, 0, "Engineering Certification title (needs skill 300)" },
-	[271626] = { 1000, 0, 0, "Leatherworking Certification title (needs skill 300)" },
-	[271627] = { 1000, 0, 0, "Tailoring Certification title (needs skill 300)" },
-	[284664] = { 1500, 0, 7, "Minimule pet" },
+	[262764] = { 200, 50000, 8, "Faction tabard", "Horde" },
+	[262765] = { 200, 50000, 8, "Faction tabard", "Alliance" },
+	[262766] = { 6000, 0, 8, "Pack Kodo mount (needs level 60 and Journeyman Riding)", nil },
+	[270887] = { 1200, 0, 6, "Tradeskill Sign toy", "Horde" },
+	[270888] = { 1200, 0, 6, "Tradeskill Sign toy", "Alliance" },
+	[271621] = { 1000, 0, 0, "Alchemy Certification title (needs skill 300)", nil },
+	[271622] = { 1000, 0, 0, "Blacksmithing Certification title (needs skill 300)", nil },
+	[271624] = { 1000, 0, 0, "Enchanting Certification title (needs skill 300)", nil },
+	[271625] = { 1000, 0, 0, "Engineering Certification title (needs skill 300)", nil },
+	[271626] = { 1000, 0, 0, "Leatherworking Certification title (needs skill 300)", nil },
+	[271627] = { 1000, 0, 0, "Tailoring Certification title (needs skill 300)", nil },
+	[284664] = { 1500, 0, 7, "Minimule pet", nil },
 }
 
 D.itemNames = {

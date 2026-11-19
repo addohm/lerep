@@ -422,3 +422,22 @@ end
 function Planner.Followed()
 	return Planner.Get(ns.db.lastPlan or "combined")
 end
+
+-- Step alerts: when the followed plan's first step is a writ or the Shipping Label and it's now
+-- done, say so and name the next step. (Other steps can leave the plan because prices changed, so
+-- they aren't announced.)
+local lastFirst
+function Planner.WatchSteps()
+	local plan = Planner.Followed()
+	local first = plan.steps and plan.steps[1]
+	local last = lastFirst
+	lastFirst = first and { key = first.key, kind = first.kind, title = first.title, writ = first.writ }
+	if not (ns.db.stepAlerts and last) or (first and first.key == last.key) then return end
+	local done = (last.kind == "writ" and last.writ and ns.Faction.WritDoneToday(last.writ.writ))
+		or (last.kind == "label" and ns.Faction.LabelDone())
+	if done then
+		ns.Print(("step done: %s.%s"):format(last.title, first and (" Next: " .. first.title .. ".") or " That's the plan done."))
+		local play, kit = rawget(_G, "PlaySound"), rawget(_G, "SOUNDKIT")
+		if play and kit and kit.UI_QUEST_COMPLETE then pcall(play, kit.UI_QUEST_COMPLETE) end
+	end
+end

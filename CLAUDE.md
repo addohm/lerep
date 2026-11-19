@@ -32,7 +32,13 @@ Discuss each feature with the owner before building it.
   - `Make.lua`: make-vs-buy (from leprofit), with the recipes this character
     knows
   - `Planner.lua`: the Rank, Favor and Combined plans (`Planner.Get(kind)`,
-    cached until `ns.version` changes), their steps and shopping list
+    cached until `ns.version` changes), their steps and shopping list, step
+    alerts
+  - `Shopping.lua`: Send to Auctionator, and the target choices (ranks, days,
+    Favor goals) the tabs share
+  - `UI/`: `Widgets.lua`, `Window.lua`, `Minimap.lua` (from leprofit);
+    `Plan.lua` (the Rank, Favor and Combined tabs), `Shopping.lua`,
+    `Options.lua`
 - `tests/`: `run_tests.py` (syntax, TOC, globals, then `smoke.lua` against
   the fake client `wowmock.lua`, from leprofit's)
 - `tools/`: `fetch_sources.py` downloads the source data into `.source/`;

@@ -232,4 +232,99 @@ do
 	WM.spells[3173] = nil
 end
 
+
+-- The window ---------------------------------------------------------------------------------------
+
+-- Each plan tab draws its progress, step box and route; opening one makes it the followed plan.
+do
+	WM.faction, WM.standing, WM.rep, WM.favor = "Alliance", 5, 3000, 0
+	WM.questsDone = { [98247] = true }
+	ns.db.targetStanding, ns.db.favorGoal, ns.db.favorGoalItem, ns.db.days = 6, 0, nil, 7
+	bump()
+	SlashCmdList.LEREP("")
+	for _, kind in ipairs({ "rank", "favor", "combined" }) do
+		ns.Window.Select(kind)
+		WM.RunTimers()
+		eq(ns.db.lastPlan, kind, kind .. " is followed")
+		local panel = ns.Window.CurrentPanel()
+		ok(panel.box, kind .. " has a step box")
+	end
+	ns.Window.Select("rank")
+	WM.RunTimers()
+	local panel = ns.Window.CurrentPanel()
+	ok(panel.repBar.text.text:find("Friendly, 3,000 of 9,000 for Honored"), "rep progress: " .. tostring(panel.repBar.text.text))
+	local plan = ns.Planner.Get("rank")
+	ok(#plan.steps >= 2, "rank plan has steps")
+	ok(panel.box.title.text == plan.steps[1].title, "the box shows the first step")
+	ok(panel.totalText.text:find("Whole plan"), "totals line")
+	-- The Favor tab without a goal asks for one.
+	ns.Window.Select("favor")
+	WM.RunTimers()
+	ok(ns.Window.CurrentPanel().emptyText.text:find("Pick a Favor goal"), "favor tab asks for a goal")
+	-- The goal menu lists your side's rewards: the Alliance sign, not the Horde one.
+	local root = WM.MenuRoot()
+	ns.Window.CurrentPanel().goalDrop.menuGenerator(nil, root)
+	local names = {}
+	for _, r in ipairs(root.radios) do names[#names + 1] = r.text end
+	local all = table.concat(names, "|")
+	ok(all:find("Pack Kodo mount %(6000%)"), "the kodo is a goal: " .. all)
+	local signs = 0
+	for _, n in ipairs(names) do if n:find("Tradeskill Sign") then signs = signs + 1 end end
+	eq(signs, 1, "one side's sign")
+	for _, r in ipairs(root.radios) do
+		if r.text:find("Minimule") then r.setSelected() end
+	end
+	eq(ns.db.favorGoal, 1500, "Minimule goal picked")
+	WM.RunTimers()
+	ok(#ns.Planner.Get("favor").steps > 0, "the Favor plan fills crates now")
+	ns.Choices.SetGoal(0)
+end
+
+-- Shopping follows the last plan tab; Send to Auctionator makes the list.
+do
+	ns.Window.Select("rank")
+	WM.RunTimers()
+	ns.Window.Select("shopping")
+	WM.RunTimers()
+	local panel = ns.Window.CurrentPanel()
+	ok(panel.heading.text:find("Rank plan"), "shopping names the plan: " .. tostring(panel.heading.text))
+	ok(panel.totalText.text:find("To buy"), "shopping total")
+	WM.lists = {}
+	local n = ns.Shopping.SendToAuctionator()
+	ok(n and n > 0 and WM.lists.LeRep, "sent to Auctionator")
+end
+
+-- Options builds and its Defaults button works.
+do
+	ns.Window.Select("options")
+	WM.RunTimers()
+	ns.db.days = 30
+	ns.ResetOptions()
+	eq(ns.db.days, 7, "defaults put the day limit back")
+end
+
+-- Step alerts: the followed plan's first writ is done.
+do
+	ns.Window.Select("rank")
+	WM.RunTimers()
+	local plan = ns.Planner.Get("rank")
+	local first = plan.steps[1]
+	ok(first.kind == "writ", "first step is a writ: " .. tostring(first.kind))
+	ns.Planner.WatchSteps()
+	WM.printed = {}
+	WM.questsDone[first.writ.writ.quest] = true
+	bump()
+	ok(printed("step done: " .. first.title:gsub("%p", "%%%0")), "step done announced")
+	WM.questsDone[first.writ.writ.quest] = nil
+end
+
+-- /lerep status and help.
+do
+	WM.printed = {}
+	SlashCmdList.LEREP("status")
+	ok(printed("Azeroth Commerce Authority: Friendly"), "status names the faction")
+	SlashCmdList.LEREP("help")
+	ok(printed("/lerep status"), "help lists commands")
+end
+
 WM.done = true
