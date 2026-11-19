@@ -20,3 +20,7 @@ All notable changes to LeRep. The format follows
   that learns the receipt's price, your rep bonus, what each kind of crate
   pays and what Coin Pouches hold. `/lerep status`. Tests with a fake game
   client.
+- The planner: Rank, Favor and Combined plans, cheapest gold per rep and per
+  Favor, finishing within a number of days (7 by default); writ items and
+  crafted bundles at the cheaper of buying and crafting; the steps and
+  today's shopping list.

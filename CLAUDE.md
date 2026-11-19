@@ -29,6 +29,10 @@ Discuss each feature with the owner before building it.
   - `Recorder.lua`: known recipes (profession windows), vendor prices and
     the receipt's Favor price, what turn-ins really gave (rep bonus, crate
     Favor), Coin Pouch values
+  - `Make.lua`: make-vs-buy (from leprofit), with the recipes this character
+    knows
+  - `Planner.lua`: the Rank, Favor and Combined plans (`Planner.Get(kind)`,
+    cached until `ns.version` changes), their steps and shopping list
 - `tests/`: `run_tests.py` (syntax, TOC, globals, then `smoke.lua` against
   the fake client `wowmock.lua`, from leprofit's)
 - `tools/`: `fetch_sources.py` downloads the source data into `.source/`;

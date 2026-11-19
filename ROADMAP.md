@@ -12,6 +12,8 @@ change.
   game marks the customer on your map anyway.
 - 0.1.0 step 2, the core (2026-11-19): settings, prices, standing and Favor,
   the recorder, tests.
+- 0.1.0 step 3, the planner (2026-11-19): the three plans, steps and
+  shopping list, with make-vs-buy; tests for each plan.
 
 ## Next
 
@@ -85,9 +87,14 @@ Saved per character.
   pays.
 - Items and bundles cost the cheaper of buying and crafting them (crafting
   only with recipes this character knows), as in leprofit.
-- Writs are once a day each: today's steps use the writs listed at your last
-  scan; the rest to the target is an estimate in gold and days at today's
-  prices.
+- Writs are once a day each. A plan finishes within a number of days (1, 3,
+  7, 14, 30 or no limit; 7 by default; the owner's pick, 2026-11-19): today's
+  steps use the writs on sale at your last scan (each once), later days
+  assume the same writs at today's prices (an estimate), and receipts cover
+  what writs can't in that time.
+- Crates on sale: Auctionator's count at the last scan when it has one,
+  else as many as needed at today's price. Receipts use the cheapest empty
+  crate.
 - Sealed writs (random) are never bought; ones in your bags get a step to
   open them, and the writ inside joins the plan.
 

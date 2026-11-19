@@ -125,4 +125,111 @@ do
 	WM.profession, WM.recipes = nil, {}
 end
 
+
+-- The planner ------------------------------------------------------------------------------------
+
+local function bump() ns.Changed() WM.RunTimers() end
+local function step(plan, key)
+	for _, s in ipairs(plan.steps) do if s.key == key then return s end end
+end
+
+-- Neutral, to Friendly: the Shipping Label (one filled crate brings it), then writs only, since
+-- receipts need Friendly.
+do
+	WM.faction, WM.standing, WM.rep, WM.favor = "Alliance", 4, 0, 0
+	WM.questsDone = {}
+	ns.db.targetStanding, ns.db.favorGoal, ns.db.days = 5, 0, 7
+	WM.auctionator = {
+		[248682] = 5000, [2447] = 20,   -- Apprentice Herbs crate; Peacebloom (20 fill it: 400)
+		[264014] = 10000, [6048] = 20000, -- Shadow Protection Potion writ and potion: 26,500 after the pouch, 75 rep
+		[264013] = 5000, [3385] = 3000, -- Lesser Mana Potion writ and potion: 4,500 after the pouch
+	}
+	WM.items[264014] = { name = "Craftsman's Writ: Shadow Protection Potion" }
+	bump()
+	local plan = ns.Planner.Get("rank")
+	eq(plan.needRep, 3000, "Neutral to Friendly")
+	ok(plan.label and plan.label.rep == 2000, "the Shipping Label is in the plan")
+	ok(step(plan, "labelfill"), "a crate is filled for the label")
+	eq(step(plan, "labelfill").item, 248682, "the cheapest crate fill")
+	eq(#plan.writsToday, 2, "both writs today")
+	eq(plan.writsToday[1].id, 264013, "the cheaper writ first")
+	eq(plan.receipts, 0, "no receipts before Friendly")
+	eq(plan.days, 7, "takes the week")
+	eq(plan.rep, 2000 + 75 * 2 + 75 * 12, "label + 2 writs a day for 7 days... until 3,000")
+	ok(not plan.shortRep, "reaches Friendly")
+	ok(step(plan, "later"), "later days are one step")
+	-- No day limit: the cheaper writ alone, for longer.
+	ns.db.days = 0
+	bump()
+	plan = ns.Planner.Get("rank")
+	eq(#plan.writsToday, 1, "just the cheaper writ")
+	eq(plan.days, 14, "1,000 rep at 75 a day")
+	-- One day: not enough writs, and no receipts before Friendly.
+	ns.db.days = 1
+	bump()
+	plan = ns.Planner.Get("rank")
+	eq(plan.shortRep, 3000 - 2000 - 150, "short of Friendly in a day")
+	ns.db.days = 7
+end
+
+-- Friendly, to Honored with a 100 Favor goal (combined): the goal takes the cheap ore crates, so
+-- receipts' Favor comes from the herb crates.
+do
+	WM.standing, WM.rep = 5, 3000
+	WM.questsDone[98247] = true -- label done
+	ns.db.targetStanding, ns.db.favorGoal = 6, 100
+	WM.auctionator[248683], WM.auctionator[2770] = 2000, 50 -- Apprentice Ore crate; 20 Copper Ore = 1,000
+	WM.history[248683] = { { rawDay = WM.today, minSeen = 2000, available = 10 } } -- 10 on sale
+	bump()
+	local plan = ns.Planner.Get("combined")
+	eq(plan.needRep, 6000, "Friendly to Honored")
+	eq(plan.goal, 100, "the Favor goal")
+	local ore, herbs
+	for _, f in ipairs(plan.fills) do
+		if f.item == 248683 then ore = f elseif f.item == 248682 then herbs = f end
+	end
+	ok(ore and ore.units == 10, "all 10 ore crates filled first (cheapest Favor)")
+	eq(plan.receipts, 99, "receipts for the rest: (6,000 - 1,050) / 50")
+	ok(herbs and herbs.units == 10 + 99 * 3, "herb crates for the rest of the goal and every receipt's 15 Favor")
+	eq(plan.containers[248682], 99, "receipts go on herb crates (the ore crates are used)")
+	eq(plan.days, 7, "a week of writs")
+	ok(step(plan, "receipts"), "a receipts step")
+	-- The Rank plan ignores the goal: receipts then get the cheap ore crates' Favor.
+	plan = ns.Planner.Get("rank")
+	eq(plan.goal, 0, "no goal in the Rank plan")
+	-- The Favor plan: crates only.
+	plan = ns.Planner.Get("favor")
+	eq(plan.needRep, 0, "no rep in the Favor plan")
+	eq(#plan.writsToday, 0, "no writs")
+	eq(plan.receipts, 0, "no receipts")
+	-- Favor you hold covers the goal first.
+	WM.favor = 100
+	bump()
+	plan = ns.Planner.Get("favor")
+	eq(#plan.fills, 0, "nothing to fill")
+	WM.favor = 0
+end
+
+-- Shopping: today's items, less what you hold; crafted ones broken down when you know the recipe.
+do
+	ns.db.targetStanding, ns.db.favorGoal = 5, 0
+	WM.standing, WM.rep = 4, 2500
+	bump()
+	local plan = ns.Planner.Get("rank")
+	local rows = {}
+	for _, r in ipairs(plan.shopping) do rows[r.itemID] = r end
+	ok(rows[264013] and rows[264013].buy == 1, "buy the writ")
+	ok(rows[3385] and rows[3385].each == 3000, "and the potion")
+	-- Knowing the recipe and it being cheaper: the herbs instead of the potion.
+	WM.spells[3173] = true -- Lesser Mana Potion
+	WM.auctionator[785], WM.auctionator[3820], WM.auctionator[3371] = 100, 200, 4 -- Mageroyal, Stranglekelp, Empty Vial
+	bump()
+	plan = ns.Planner.Get("rank")
+	rows = {}
+	for _, r in ipairs(plan.shopping) do rows[r.itemID] = r end
+	ok(not rows[3385], "the potion is crafted")
+	ok(rows[785] and rows[3820], "its herbs are bought")
+	WM.spells[3173] = nil
+end
+
 WM.done = true
