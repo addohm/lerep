@@ -7,9 +7,11 @@ vulnerability.
 
 ## Secrets
 
-TODO: which secrets LeRep uses, where each one lives, and how to rotate it.
-Never commit them.
+None yet: there is no code. TODO: which secrets LeRep will use, where each
+one lives, and how to rotate it. Never commit them.
 
 ## Access
 
-TODO: who can deploy, push, or reach production, and how that's granted.
+- Repo: GitHub `addohm/LeRep`, owned by addohm.
+- Claude's workspace pushes with a per-repo deploy key (`deploy-ws-LeRep`).
+- TODO: anyone else with push access, and where it runs live (if anywhere).

@@ -1,10 +1,15 @@
 # LeRep
 
-TODO: one or two sentences on what this is and who it's for.
+TODO: one or two sentences on what this is and who it's for. (No code yet;
+the project is just starting.)
 
 ## Getting started
 
-TODO: what you need installed, and how to set it up and run it locally.
+```sh
+git clone git@github.com:addohm/LeRep.git
+```
+
+TODO: what you need installed, and how to run it, once there's code.
 
 ## Usage
 

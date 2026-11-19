@@ -1,6 +1,7 @@
 # Deploying LeRep
 
-TODO: where it runs (host, service, URL).
+Nothing is deployed yet: there is no code. TODO: where will it run (host,
+service, URL), or is it shipped as a package instead?
 
 ## First-time setup
 

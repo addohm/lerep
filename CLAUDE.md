@@ -4,11 +4,20 @@ Orientation for Claude working on LeRep. Read this first.
 
 ## What this is
 
-TODO: what the project does, its main parts, and how they fit together.
+LeRep has no code yet: the repo holds only the standard docs. Source is on
+GitHub at `addohm/LeRep` (pushed via the `deploy-ws-LeRep` deploy key).
+
+TODO: what is LeRep? The name matches the Forever addons (leboof, leproc,
+leprofit) — is it a reputation addon, and should it follow their release
+pattern?
 
 ## Layout
 
-TODO: the important folders and files, one line each.
+- `README.md`, `CHANGELOG.md`, `DEPLOY.md`, `SECURITY.md`, `ROADMAP.md`: the
+  standard docs
+- `CLAUDE.md`: this file
+
+Add a line for each folder or key file as code arrives.
 
 ## Workflow
 
@@ -22,11 +31,13 @@ TODO: the important folders and files, one line each.
    - SECURITY.md: when secrets, access or permissions change
    - ROADMAP.md: when something on it is done, or new plans are made
    - this file: when the layout, workflow or conventions change
-4. Run the checks (TODO: the lint and test commands), then commit.
+4. Run the checks (none yet; TODO: the lint and test commands once there's code), then commit.
 
 ## Conventions
 
-TODO: coding style, naming, anything a newcomer would get wrong.
+- Branch: `main`.
+- Changelog follows Keep a Changelog; versions follow SemVer.
+- TODO: coding style and naming, once the language is chosen.
 
 ## Don't
 

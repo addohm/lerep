@@ -9,3 +9,4 @@ All notable changes to LeRep. The format follows
 ### Added
 
 - Standard docs: README, CLAUDE, CHANGELOG, DEPLOY, SECURITY and ROADMAP (2026-11-19).
+- Docs filled in with what's known so far, with TODO questions (2026-11-19).
