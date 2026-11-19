@@ -15,3 +15,8 @@ All notable changes to LeRep. The format follows
   `LeRep/Data.lua` from Forever's game data and Efficient Games' player data:
   150 writs, 30 crates with their bundles, 218 recipes behind writ items and
   crafted bundles, vendor prices, Favor rewards and goals, the camps.
+- The core: settings, Auctionator/TSM and vendor prices (from leprofit),
+  your standing, Favor, Shipping Label and today's writs, and a recorder
+  that learns the receipt's price, your rep bonus, what each kind of crate
+  pays and what Coin Pouches hold. `/lerep status`. Tests with a fake game
+  client.

@@ -218,6 +218,18 @@ D.crates = {
 	[248713] = { label = "Artisan Parts", tier = "Artisan", green = true, level = 35, favor = 40, bundles = { { 15994, 5 }, { 18631, 5 }, { 16000, 2 } } },
 }
 
+-- The quests that hand in a filled crate: questID = { sealed crate item, tier, green }
+D.sealedCrates = {
+	[91899] = { item = 248765, tier = "Apprentice", green = false },
+	[91900] = { item = 248766, tier = "Journeyman", green = false },
+	[91901] = { item = 248767, tier = "Expert", green = false },
+	[91902] = { item = 248768, tier = "Artisan", green = false },
+	[91904] = { item = 248770, tier = "Apprentice", green = true },
+	[91905] = { item = 248771, tier = "Journeyman", green = true },
+	[91906] = { item = 248772, tier = "Expert", green = true },
+	[91907] = { item = 248773, tier = "Artisan", green = true },
+}
+
 -- recipeSpellID = { name, profession, product, yield, reagents = { { itemID, count } } }
 D.recipes = {
 	[2169] = { name = "Dark Leather Tunic", profession = "Leatherworking", product = 2317, yield = 1, reagents = { { 2319, 6 }, { 2321, 1 }, { 4340, 1 } } },
@@ -1131,6 +1143,14 @@ D.itemNames = {
 	[248711] = "Waylaid Crate: Artisan Fabrics",
 	[248712] = "Waylaid Crate: Artisan Ingots",
 	[248713] = "Waylaid Crate: Artisan Parts",
+	[248765] = "Sealed Apprentice Crate",
+	[248766] = "Sealed Journeyman Crate",
+	[248767] = "Sealed Expert Crate",
+	[248768] = "Sealed Artisan Crate",
+	[248770] = "Sealed Apprentice Crate",
+	[248771] = "Sealed Journeyman Crate",
+	[248772] = "Sealed Expert Crate",
+	[248773] = "Sealed Artisan Crate",
 	[249399] = "Frilled Lichen",
 	[249409] = "Cerulean Dye",
 	[249424] = "Rosecap",

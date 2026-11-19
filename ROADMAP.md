@@ -10,6 +10,8 @@ change.
 - 0.1.0 step 1, the data (2026-11-19): 150 writs and 30 crates, matching an
   independent list exactly. Only 3 writ customers are recorded so far; the
   game marks the customer on your map anyway.
+- 0.1.0 step 2, the core (2026-11-19): settings, prices, standing and Favor,
+  the recorder, tests.
 
 ## Next
 

@@ -202,6 +202,18 @@ def main():
                      "level": int(r["RequiredLevel"]), "favor": FAVOR[tier][1 if green else 0],
                      "bundles": bundles}
 
+    # --- Sealed (filled) crates and the quest that hands each in: LeRep records the Favor it pays.
+    sealed = {}
+    for qid, q in quests.items():
+        if q.get("title") != "A Sealed Crate":
+            continue
+        for o in q.get("objectives", []):
+            r = items.get(o.get("objectId"))
+            if o.get("type") == "item" and r and r["Display_lang"].startswith("Sealed "):
+                tier = next((t for t in TIERS if t in r["Display_lang"]), None)
+                if tier and r["OverallQualityID"] in ("1", "2"):
+                    sealed[int(qid)] = (o["objectId"], tier, r["OverallQualityID"] == "2")
+
     # --- Writs.
     takers = {}
     for nid, v in npcs.items():
@@ -277,7 +289,7 @@ def main():
 
     # --- Names for every item mentioned.
     mentioned = set(materials) | set(writs) | set(crates) | set(rewards) | set(SEALED_WRITS)
-    mentioned |= {262902, 262917, 248549, 280179, 280180}
+    mentioned |= {262902, 262917, 248549, 280179, 280180} | {v[0] for v in sealed.values()}
     mentioned |= {p for rc in recipes.values() for p in [rc["product"]]}
     item_names = {i: name(i) for i in mentioned if name(i)}
 
@@ -288,7 +300,7 @@ def main():
         goals[i] = (favor, copper, standing, what)
     item_names.update({i: name(i) for i in goals if name(i)})
 
-    write(writs, crates, recipes, vendor_prices, rewards, goals, camps, item_names)
+    write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, item_names)
     print(f"Wrote {OUT.relative_to(ROOT)}: {len(writs)} writs, {len(crates)} crates, {len(recipes)} recipes, "
           f"{len(vendor_prices)} vendor prices, {len(rewards)} Favor rewards, {len(item_names)} item names")
 
@@ -310,7 +322,7 @@ def pairs_lua(lst):
     return "{ " + ", ".join(f"{{ {a}, {b} }}" for a, b in lst) + " }"
 
 
-def write(writs, crates, recipes, vendor_prices, rewards, goals, camps, item_names):
+def write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, item_names):
     build = (SOURCE / "BUILD").read_text().strip() if (SOURCE / "BUILD").exists() else "?"
     L = []
     w = L.append
@@ -357,6 +369,13 @@ def write(writs, crates, recipes, vendor_prices, rewards, goals, camps, item_nam
         c = crates[i]
         w(f"\t[{i}] = {{ label = {lua_str(c['label'])}, tier = \"{c['tier']}\", green = {str(c['green']).lower()}, "
           f"level = {c['level']}, favor = {c['favor']}, bundles = {pairs_lua(c['bundles'])} }},")
+    w("}")
+    w("")
+    w("-- The quests that hand in a filled crate: questID = { sealed crate item, tier, green }")
+    w("D.sealedCrates = {")
+    for q in sorted(sealed):
+        i, t, g = sealed[q]
+        w(f"\t[{q}] = {{ item = {i}, tier = \"{t}\", green = {str(g).lower()} }},")
     w("}")
     w("")
     w("-- recipeSpellID = { name, profession, product, yield, reagents = { { itemID, count } } }")
