@@ -1,20 +1,23 @@
 # Deploying LeRep
 
-Nothing is deployed yet: there is no code. TODO: where will it run (host,
-service, URL), or is it shipped as a package instead?
+LeRep is a World of Warcraft addon: it runs inside the game client (WoW:
+Forever, Interface 16001), and there's no server. Releases will be published
+on CurseForge and Wago, like leprofit's. Nothing is built yet.
 
 ## First-time setup
 
-TODO: step by step, with every command.
+Comes with 0.1.0: leprofit's `tools\install_forever.cmd`, adapted.
 
 ## Shipping a change
 
-TODO: how a change gets from `main` to live, and how to roll back.
+Comes with 0.1.0: tests, push, install script, `/reload`; releases as
+leprofit's (`make_release.py`, tag, upload to both sites).
 
 ## Configuration
 
-TODO: the settings it needs (names only, never the values) and where they live.
+No secrets. In-game settings will be per character, in the game's
+SavedVariables.
 
 ## Troubleshooting
 
-TODO: logs, health checks, common problems.
+Comes with 0.1.0.
