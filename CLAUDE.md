@@ -42,7 +42,10 @@ Discuss each feature with the owner before building it.
 - `tests/`: `run_tests.py` (syntax, TOC, globals, then `smoke.lua` against
   the fake client `wowmock.lua`, from leprofit's)
 - `tools/`: `fetch_sources.py` downloads the source data into `.source/`;
-  `gen_data.py` turns it into `LeRep/Data.lua`.
+  `gen_data.py` turns it into `LeRep/Data.lua`; `install_forever.cmd`
+  (Windows install, from leprofit's, with the rewritten-history check);
+  `make_release.py` (the release zip)
+- `TESTING.md`: the in-game checklist
 - `.source/` (git-ignored): the downloaded game data (wago.tools CSVs) and
   Efficient Games' player data (`eg/`).
 - `README.md`, `CHANGELOG.md`, `DEPLOY.md`, `SECURITY.md`, `ROADMAP.md`: the
@@ -75,6 +78,7 @@ Discuss each feature with the owner before building it.
 - Per-step detail goes in tooltips first; add a column only for things worth
   sorting by (the owner's rule from leprofit).
 - The version and build show in chat only, never in the window.
+- Batch files need CRLF (`.gitattributes`).
 - Efficient Games' data is CC BY 4.0: keep its credit in the README and in
   `Data.lua`'s header.
 - Numbers no data file holds (Favor per crate, the receipt's price and rank,

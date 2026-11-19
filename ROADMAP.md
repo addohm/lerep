@@ -17,20 +17,13 @@ change.
 - 0.1.0 step 4, the window (2026-11-19): the three plan tabs, Shopping,
   Options, minimap button, step alerts. A stock icon until the release
   kit's art.
+- 0.1.0 step 5, tools (2026-11-19): install and release scripts,
+  `TESTING.md`. 0.1.0 is built; not yet tried in game.
 
 ## Next
 
-1. 0.1.0, built in commit-sized pieces:
-   1. The data: `tools/gen_data.py` builds `LeRep/Data.lua` (writs, crates,
-      bundles, rewards, NPCs) and the recipes behind writ items and crafted
-      bundles.
-   2. The core: settings, prices (from leprofit), standing and Favor, the
-      recorder.
-   3. The planner: Rank, Favor and Combined plans, with tests.
-   4. The window: Rank, Favor, Combined, Shopping and Options tabs.
-   5. Tools: install script, release script, `TESTING.md`.
-2. In-game test of 0.1.0.
-3. The release kit: icon and banner art, `LISTING.md`, a tagged zip; publish
+1. In-game test of 0.1.0 (`TESTING.md`).
+2. The release kit: icon and banner art, `LISTING.md`, a tagged zip; publish
    on CurseForge and Wago.
 
 ## Ideas

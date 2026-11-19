@@ -6,12 +6,49 @@ on CurseForge and Wago, like leprofit's. Nothing is built yet.
 
 ## First-time setup
 
-Comes with 0.1.0: leprofit's `tools\install_forever.cmd`, adapted.
+On the Windows test PC:
+
+1. Clone the repo anywhere: `git clone https://github.com/addohm/LeRep.git` (it needs your GitHub
+   login if the repo is private).
+2. Open `tools\install_forever.cmd` and check `WOW` at the top: it's the client folder, by default
+   `C:\Program Files (x86)\World of Warcraft\_forever_`, the live game.
+3. Run `tools\install_forever.cmd` from a terminal, then start the game and tick LeRep in the
+   AddOns list.
+
+To install by hand instead, copy the `LeRep` folder (not the repo root) into
+`<WoW>\_forever_\Interface\AddOns\`.
 
 ## Shipping a change
 
-Comes with 0.1.0: tests, push, install script, `/reload`; releases as
-leprofit's (`make_release.py`, tag, upload to both sites).
+1. Run the tests: `.venv/bin/python tests/run_tests.py`.
+2. Commit and push.
+3. On Windows, run `tools\install_forever.cmd`, then `/reload` (or restart the game if it says so).
+4. For a release: bump `## Version` in `LeRep/LeRep.toc`, move the CHANGELOG's Unreleased entries
+   under the new version, and commit. Then `python3 tools/make_release.py` writes
+   `release/LeRep-<version>.zip` from the last commit (it refuses if `LeRep/` has uncommitted
+   changes); commit the zip, tag (`git tag v0.1.0`) and push with `--tags`. Upload the zip to
+   CurseForge and to Wago.
+
+## The install script
+
+`tools\install_forever.cmd` (from leprofit's) does, in order:
+
+- `git pull --ff-only` (it only gets what's pushed, so push first). The pull can update the
+  script itself, so it runs from a copy in `%TEMP%`. If the pull fails because GitHub's history was
+  rewritten (this copy's last commit isn't in it any more), it says so and prints the two commands
+  that move the copy onto GitHub's: `git fetch origin --tags --force` and
+  `git reset --hard origin/main` (they throw away commits and edits made only in the copy).
+- Mirrors `LeRep\` into `<WOW>\Interface\AddOns\LeRep\` (`robocopy /MIR`), creating it on the
+  first run. If `WOW` itself doesn't exist it stops, since the path is probably wrong.
+- Writes the commit into the installed `LeRep\Build.lua`, so `/lerep help` shows
+  `v<version> build <commit>`. "-dirty" means the copy included uncommitted changes.
+- Packs `LeRep-<version>.zip` on the desktop: `git archive` of the committed addon, without the
+  build stamp.
+- Says whether `/reload` is enough. WoW reads an addon's file list only when the game starts, so
+  when `LeRep.toc` changed you must restart the game.
+
+If creating or copying fails, the WoW folder may need the script to run as administrator. The
+script needs CRLF line endings to run reliably; `.gitattributes` makes git check it out that way.
 
 ## Refreshing the data
 
@@ -21,11 +58,22 @@ data and every build of Efficient Games' player data into `.source/`; then
 (150 writs and 30 crates so far), run the tests, and commit the new
 `Data.lua`.
 
+## Rolling back
+
+Install an older version: `git checkout <tag> -- LeRep` in the clone, copy the folder over the
+installed one, then `git checkout main -- LeRep` to return.
+
 ## Configuration
 
-No secrets. In-game settings will be per character, in the game's
-SavedVariables.
+There are no secrets or environment settings. In-game settings are per character, in
+`WTF/Account/<account>/<realm>/<character>/SavedVariables/LeRep.lua`. Vendor prices and what LeRep
+has seen (the receipt's price, crate Favor, Coin Pouches) are shared by your characters, in
+`WTF/Account/<account>/SavedVariables/LeRep.lua`.
 
 ## Troubleshooting
 
-Comes with 0.1.0.
+- **Nothing on `/lerep`:** the addon isn't loaded. Check the AddOns list; if it says out of date,
+  the client's Interface number isn't 16001.
+- **Empty plans, or "no price" warnings:** `/lerep status` says which price addons it found.
+  Without Auctionator (or TSM) there are no auction prices; with it, scan the auction house.
+- **Lua errors:** `/console scriptErrors 1` shows them; report them with the `/lerep help` build.

@@ -27,3 +27,6 @@ All notable changes to LeRep. The format follows
 - The window: Rank, Favor and Combined tabs (targets, progress, the current
   step and the route), Shopping with Send to Auctionator, Options; a minimap
   button and the addon menu entry; step alerts in chat.
+- Tools: `tools/install_forever.cmd` (Windows install) and
+  `tools/make_release.py` (the release zip); `TESTING.md`, the in-game
+  checklist.

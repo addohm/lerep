@@ -6,16 +6,18 @@ the Azeroth Commerce Authority (Alliance) and Durotar Supply and Logistics
 (Horde). It tells you which writs to buy, which crates to fill, how many, and
 what it all costs, using your auction house prices.
 
-Status: being built (0.1.0); the data is in, the addon isn't yet. The agreed design is in
+Status: 0.1.0, built and not yet tried in game ([TESTING.md](TESTING.md) is the checklist). The agreed design is in
 [ROADMAP.md](ROADMAP.md).
 
 ## Getting started
 
-```sh
-git clone git@github.com:addohm/LeRep.git
-```
+Players: unzip the release into `World of Warcraft\_forever_\Interface\AddOns\`, so
+there's an `AddOns\LeRep` folder, and install Auctionator.
 
-TODO: installing and running it in game, once there's code.
+From the repo, on Windows: clone it (`git clone https://github.com/addohm/LeRep.git`) and run
+`tools\install_forever.cmd`, which copies `LeRep` into the game (DEPLOY.md has the details).
+The tests run with `.venv/bin/python tests/run_tests.py` (set up with
+`python3 -m venv .venv && .venv/bin/pip install lupa`).
 
 ## Usage
 
