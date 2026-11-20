@@ -237,7 +237,7 @@ local function MakePage(kind)
 		end
 		routeScroll = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
 		routeScroll:SetPoint("TOPLEFT", 0, top - STEP_H - 6 - ROW_H)
-		routeScroll:SetPoint("BOTTOMRIGHT", -24, 40)
+		routeScroll:SetPoint("BOTTOMRIGHT", -24, 52)
 		routeInner = CreateFrame("Frame", nil, routeScroll)
 		routeInner:SetSize(500, 1)
 		routeScroll:SetScrollChild(routeInner)
@@ -245,14 +245,14 @@ local function MakePage(kind)
 		rows[0] = nil -- the heading isn't a route row
 
 		local rule = panel:CreateTexture(nil, "BORDER")
-		rule:SetPoint("BOTTOMLEFT", 0, 36)
-		rule:SetPoint("BOTTOMRIGHT", 0, 36)
+		rule:SetPoint("BOTTOMLEFT", 0, 48)
+		rule:SetPoint("BOTTOMRIGHT", 0, 48)
 		rule:SetHeight(1)
 		rule:SetColorTexture(0.6, 0.45, 0.15, 0.6)
 		totalText = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		totalText:SetPoint("BOTTOMLEFT", 4, 4)
 		totalText:SetPoint("RIGHT", panel, "RIGHT", -20, 0)
-		totalText:SetHeight(30)
+		totalText:SetHeight(42)
 		totalText:SetJustifyH("LEFT")
 		totalText:SetJustifyV("MIDDLE")
 		panel.totalText = totalText
@@ -385,6 +385,24 @@ local function MakePage(kind)
 		if plan.days and plan.days > 1 then total = total .. (" over %d days"):format(plan.days) end
 		total = total .. ("  ·  To buy today: %s"):format(ns.Money(plan.spend or 0))
 		lines[1] = total
+		-- How far your gold goes.
+		if #steps > 0 then
+			local money = ns.Try(GetMoney) or 0
+			local reach = ns.Planner.GoldReach(plan, money)
+			if reach.all then
+				lines[#lines + 1] = ("Your %s covers the whole plan."):format(ns.Money(money))
+			else
+				local parts = {}
+				if kind ~= "favor" then
+					local standing = 4
+					for s = 5, 8 do if reach.rep >= T[s] then standing = s end end
+					parts[#parts + 1] = ("%s rep (%s)"):format(Number(reach.rep), ns.Faction.StandingName(standing))
+				end
+				if kind ~= "rank" then parts[#parts + 1] = Number(reach.favor) .. " Favor" end
+				lines[#lines + 1] = ("Your %s gets you to %s; %s short of the rest."):format(ns.Money(money),
+					table.concat(parts, " and "), ns.Money(reach.short))
+			end
+		end
 		local warn = {}
 		if plan.shortRep then warn[#warn + 1] = ("%s rep short: not enough writs on sale in that time%s"):format(Number(plan.shortRep),
 			(plan.value + plan.rep < ns.Faction.THRESHOLDS[5]) and ", and receipts need Friendly" or ", and no crates for receipts") end
@@ -392,7 +410,7 @@ local function MakePage(kind)
 		local missing = 0
 		for _ in pairs(plan.missing) do missing = missing + 1 end
 		if missing > 0 then warn[#warn + 1] = ("%d item%s with no price (scan the auction house)"):format(missing, missing == 1 and "" or "s") end
-		if #warn > 0 then lines[2] = ORANGE .. table.concat(warn, "; ") .. "|r" end
+		if #warn > 0 then lines[#lines + 1] = ORANGE .. table.concat(warn, "; ") .. "|r" end
 		totalText:SetText(table.concat(lines, "\n"))
 	end
 

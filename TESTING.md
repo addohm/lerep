@@ -32,6 +32,8 @@ Scan the auction house with Auctionator first.
 - [ ] A writ you hold in your bags is planned without buying it.
 - [ ] Holding a Sealed Writ adds an "Open" step; an unread Waylaid Crate adds a "Read the label" step.
 - [ ] Below Friendly, no receipts are planned; the totals line explains a shortfall.
+- [ ] The totals say "Your <gold> covers the whole plan", or the rep (and Favor) your gold gets you
+      to and how much you're short; it changes as your gold does.
 
 ## Rewards
 

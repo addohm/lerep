@@ -280,6 +280,26 @@ do
 	ns.Choices.SetGoal(0)
 end
 
+-- How far your gold goes: the whole plan, or the rep (and Favor) it gets you to.
+do
+	ns.Window.Select("rank")
+	local plan = ns.Planner.Get("rank")
+	local full = ns.Planner.GoldReach(plan, 1e9)
+	ok(full.all and full.short == 0, "a fortune covers it all")
+	eq(full.rep, plan.value + plan.rep, "and reaches the plan's rep")
+	local none = ns.Planner.GoldReach(plan, 0)
+	ok(not none.all and none.short > 0, "no gold: short")
+	ok(none.rep < full.rep, "no gold gets less rep")
+	WM.money = 0
+	bump()
+	local text = ns.Window.CurrentPanel().totalText.text
+	ok(text:find("Your 0 gets you to") and text:find("short of the rest"), "totals say how far gold goes: " .. text)
+	WM.money = 1e9
+	bump()
+	ok(ns.Window.CurrentPanel().totalText.text:find("covers the whole plan"), "and when it covers it all")
+	WM.money = 0
+end
+
 -- Shopping follows the last plan tab; Send to Auctionator makes the list.
 do
 	ns.Window.Select("rank")

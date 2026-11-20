@@ -404,6 +404,36 @@ function Planner.Shopping(plan)
 	return rows, total
 end
 
+-- How far your gold goes: the steps in order, each costing what you'd still have to buy (what you
+-- hold is used up as the steps go), until the gold runs out part-way through a step. Returns
+-- { all (covers the whole plan), rep (where your rep gets to), favor (Favor you'd have), short
+-- (gold missing for the rest) }.
+function Planner.GoldReach(plan, money)
+	local held, gold = {}, money
+	local rep, favor = plan.value or 0, plan.held or 0
+	local total = 0
+	for _, s in ipairs(plan.steps or {}) do
+		local spend = 0
+		if s.day == "later" then
+			spend = s.cost or 0
+		else
+			for _, u in ipairs(s.uses or {}) do
+				local have = held[u[1]] or ns.ItemCount(u[1])
+				local use = math.min(have, u[2])
+				held[u[1]] = have - use
+				spend = spend + (u[2] - use) * (plan.price(u[1]) or 0)
+			end
+		end
+		total = total + spend
+		local share = 1
+		if spend > gold then share = spend > 0 and gold / spend or 1 end
+		rep = rep + (s.rep or 0) * share
+		favor = favor + (s.favor or 0) * share
+		gold = math.max(0, gold - spend)
+	end
+	return { all = total <= money, rep = math.floor(rep), favor = math.floor(favor), short = math.max(0, total - money) }
+end
+
 -- Plans are worked out again only when something changed (ns.version).
 local cache = {}
 function Planner.Get(kind)

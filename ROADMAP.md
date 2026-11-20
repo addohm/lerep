@@ -18,6 +18,8 @@ change.
   Options, minimap button, step alerts. A stock icon until the release
   kit's art.
 - The Rewards tab (2026-11-20).
+- "How far your gold goes" in each plan's totals (2026-11-20): it was in the
+  design but missed from 0.1.0.
 - 0.1.0 step 5, tools (2026-11-19): install and release scripts,
   `TESTING.md`. 0.1.0 is built; not yet tried in game.
 
