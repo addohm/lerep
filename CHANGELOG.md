@@ -27,6 +27,10 @@ All notable changes to Lerep. The format follows
 - The window: Rank, Favor and Combined tabs (targets, progress, the current
   step and the route), Shopping with Send to Auctionator, Options; a minimap
   button and the addon menu entry; step alerts in chat.
+- The Rewards tab: what Merchant's Favor buys, grouped by the rank each
+  reward needs (marked "?" where only guides give the rank), then any rank,
+  then recipes by profession; who sells each. Clicking a reward makes it your
+  Favor goal and raises the target rank when it needs more.
 - The addon is called Lerep (folder, title, saved settings `LerepDB` and
   `LerepCharDB`); the repo is `addohm/lerep`. The install script removes an
   installed `LeRep` folder from earlier builds.

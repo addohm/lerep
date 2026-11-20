@@ -405,6 +405,9 @@ local function MakePage(kind)
 	return page
 end
 
+-- Shared with the Rewards tab, which looks like these.
+ns.PlanUI = { Dropdown = Dropdown, RankMenu = RankMenu, GoalMenu = GoalMenu, Bar = Bar }
+
 for _, kind in ipairs(ns.Planner.KINDS) do
 	ns.Window.AddPage(MakePage(kind))
 end

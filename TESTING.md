@@ -33,6 +33,17 @@ Scan the auction house with Auctionator first.
 - [ ] Holding a Sealed Writ adds an "Open" step; an unread Waylaid Crate adds a "Read the label" step.
 - [ ] Below Friendly, no receipts are planned; the totals line explains a shortfall.
 
+## Rewards
+
+- [ ] Rewards are grouped Friendly, Honored, Revered, Exalted, Any rank, then Recipes; each rank
+      heading says unlocked or how much rep to go. Only your side's tabard and sign are listed.
+- [ ] A "?" after a rank: its tooltip says the rank is from guides. Hovering any reward shows the
+      item's own tooltip with its Favor price.
+- [ ] A profession line opens and closes its recipes.
+- [ ] Clicking a reward makes it the Favor goal (the goal dropdown shows it) and raises the target
+      rank if it needs more; the box says "Your goal" and the Combined plan's cost.
+- [ ] The box names who sells it and where (or your camp, where no seller is recorded).
+
 ## Shopping
 
 - [ ] The heading names the plan tab you opened last.

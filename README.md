@@ -30,6 +30,9 @@ scan the auction house so Lerep has writ, crate and material prices.
   progress, the current step (what to buy or craft, where to hand it in), and
   the route: every step with the rep or Favor it gives and its cost. Click a
   step to see it in the box; hover for detail.
+- **Rewards:** what Merchant's Favor buys, grouped by the rank it needs
+  (unlocked, or how much rep to go), then recipes by profession. Click one to
+  make it your Favor goal; the plans then work towards it.
 - **Shopping:** what today's steps need, for the plan tab you opened last:
   crafted items broken down into materials, less what you hold. Send to
   Auctionator makes a "Lerep" shopping list.

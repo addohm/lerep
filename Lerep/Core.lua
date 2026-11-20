@@ -16,6 +16,7 @@ local DEFAULTS = {
 	usePouch = true,     -- take the Coin Pouch a writ pays off its cost
 	lastPlan = "combined", -- the plan tab opened last: Shopping and the step alerts follow it
 	stepAlerts = true,   -- say in chat when a step is done
+	rewardsOpen = {},    -- profession -> true: its recipes are open on the Rewards tab
 	known = {},          -- recipeSpellID -> true: recipes this character knows (read from the profession window)
 	window = {},         -- the window: pos, size, tab
 	minimap = { angle = 325, hide = false }, -- clear of Nothing Wasted, Ticky, Leboof, Leproc and Leprofit (200-300)

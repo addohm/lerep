@@ -81,21 +81,33 @@ ns.Choices = {}
 ns.Choices.RANKS = { { 5, "Friendly" }, { 6, "Honored" }, { 7, "Revered" }, { 8, "Exalted" } }
 ns.Choices.DAYS = { { 1, "1 day" }, { 3, "3 days" }, { 7, "7 days" }, { 14, "14 days" }, { 30, "30 days" }, { 0, "No limit" } }
 
--- The Favor goals: none, each reward in the data (cheapest first), or the amount typed in Options.
+-- Whether a reward is for this character's side (each side has its own tabard and sign).
+function ns.Choices.ForMySide(reward)
+	return not reward.side or reward.side == ns.Faction.Side()
+end
+
+-- A reward's short name for lists: what it is, else its item name.
+function ns.Choices.RewardName(item)
+	local r = ns.data.rewards[item]
+	return r and r.what and (r.what:gsub(" %(.*%)", ""):gsub(":.*", "")) or ns.ItemName(item)
+end
+
+-- The Favor goals: none, the main rewards (cheapest first) plus any other reward picked on the
+-- Rewards tab, or the amount typed in Options.
 function ns.Choices.Goals()
 	local list = { { 0, "No Favor goal" } }
 	local rewards = {}
-	local side = ns.Faction.Side()
-	for item, g in pairs(ns.data.goals) do
-		-- Each side's own tabard and sign only.
-		if not g[5] or g[5] == side then rewards[#rewards + 1] = { item = item, favor = g[1], what = g[4] } end
+	for item, r in pairs(ns.data.rewards) do
+		if (r.goal or item == ns.db.favorGoalItem) and ns.Choices.ForMySide(r) then
+			rewards[#rewards + 1] = { item = item, favor = r.favor }
+		end
 	end
 	table.sort(rewards, function(a, b)
 		if a.favor ~= b.favor then return a.favor < b.favor end
 		return a.item < b.item
 	end)
 	for _, r in ipairs(rewards) do
-		list[#list + 1] = { "item:" .. r.item, ("%s (%d)"):format(r.what:gsub(" %(.*%)", ""), r.favor) }
+		list[#list + 1] = { "item:" .. r.item, ("%s (%d)"):format(ns.Choices.RewardName(r.item), r.favor) }
 	end
 	if ns.db.favorGoal > 0 and not ns.db.favorGoalItem then
 		list[#list + 1] = { "amount", ("%d Favor"):format(ns.db.favorGoal) }
@@ -115,7 +127,9 @@ function ns.Choices.SetGoal(key)
 		ns.db.favorGoal, ns.db.favorGoalItem = 0, nil
 	elseif type(key) == "string" and key:find("^item:") then
 		local item = tonumber(key:match("%d+"))
-		ns.db.favorGoal, ns.db.favorGoalItem = ns.data.goals[item][1], item
+		local r = ns.data.rewards[item]
+		if not r then return end
+		ns.db.favorGoal, ns.db.favorGoalItem = r.favor, item
 	end
 	ns.Changed()
 end

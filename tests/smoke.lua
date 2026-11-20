@@ -318,6 +318,62 @@ do
 	WM.questsDone[first.writ.writ.quest] = nil
 end
 
+-- The Rewards tab: rewards grouped by rank, your side's only; clicking one makes it the goal and
+-- raises the target rank; a profession line opens its recipes.
+do
+	WM.faction, WM.standing, WM.rep, WM.favor = "Alliance", 5, 3000, 300
+	ns.db.targetStanding = 6
+	ns.Choices.SetGoal(0)
+	bump()
+	ns.Window.Select("rewards")
+	WM.RunTimers()
+	local panel = ns.Window.CurrentPanel()
+	ok(panel.box, "rewards has a box")
+	local entries = ns.RewardEntries()
+	local heads, kodo, hordeTabard, receipt = {}, nil, nil, nil
+	for _, e in ipairs(entries) do
+		if e.kind == "head" then heads[#heads + 1] = e.text .. (e.status and (" " .. e.status) or "") end
+		if e.item == 262766 then kodo = e end
+		if e.item == 262764 then hordeTabard = e end
+		if e.item == 262902 then receipt = e end
+	end
+	local h = table.concat(heads, "|")
+	ok(h:find("^Friendly |cff1eff00unlocked"), "Friendly unlocked: " .. h)
+	ok(h:find("Honored |cffff99336,000 rep to go"), "Honored to go: " .. h)
+	ok(h:find("Exalted") and h:find("Any rank") and h:find("Recipes"), "all groups: " .. h)
+	ok(kodo and receipt, "kodo and receipt listed")
+	ok(not hordeTabard, "the Horde tabard isn't listed for the Alliance")
+	-- Recipes are collapsed per profession; a click opens one.
+	local lw
+	for _, e in ipairs(entries) do if e.kind == "prof" and e.profession == "Leatherworking" then lw = e end end
+	ok(lw and lw.count > 50 and not lw.open, "Leatherworking collapsed")
+	ns.db.rewardsOpen.Leatherworking = true
+	local open = 0
+	for _, e in ipairs(ns.RewardEntries()) do if e.indent then open = open + 1 end end
+	eq(open, lw.count, "its recipes listed when open")
+	ns.db.rewardsOpen.Leatherworking = nil
+	-- Picking the kodo: the goal, and Exalted.
+	ns.PickReward(262766)
+	WM.RunTimers()
+	eq(ns.db.favorGoal, 6000, "kodo is the goal")
+	eq(ns.db.favorGoalItem, 262766, "the goal's item")
+	eq(ns.db.targetStanding, 8, "target raised to Exalted")
+	ok(panel.box.lines[5].text:find("Your goal"), "the box says it's the goal")
+	ok(panel.box.lines[4].text:find("Sold at"), "where it's sold: " .. tostring(panel.box.lines[4].text))
+	-- A recipe can be the goal too, and shows in the goal dropdown.
+	ns.PickReward(252765)
+	WM.RunTimers()
+	eq(ns.db.favorGoal, 30, "a recipe as the goal")
+	local root = WM.MenuRoot()
+	panel.goalDrop.menuGenerator(nil, root)
+	local found = false
+	for _, r in ipairs(root.radios) do if r.isSelected() then found = true end end
+	ok(found, "the goal dropdown shows the recipe as picked")
+	ns.Choices.SetGoal(0)
+	ns.db.targetStanding = 6
+	WM.favor = 0
+end
+
 -- /lerep status and help.
 do
 	WM.printed = {}

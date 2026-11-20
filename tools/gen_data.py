@@ -14,7 +14,9 @@ What it writes, and where each part comes from:
 - Recipes: every profession recipe (SkillLineAbility + SpellEffect "create item" + SpellReagents)
   that makes a writ item, a bundle material, or something those are made from (3 levels deep).
 - Vendor prices: what players recorded vendors charging for those materials.
-- Merchant's Favor rewards: everything players recorded vendors selling for Favor.
+- Merchant's Favor rewards: everything players recorded vendors selling for Favor, plus the
+  rewards below that nobody has recorded yet; the rank each needs (the game data's, else the
+  guides'), its side, its profession (recipes), and who sells it on each side.
 - The camps' NPCs and their positions.
 - Item names for every item the data mentions.
 """
@@ -48,9 +50,9 @@ COIN_POUCH = {"Journeyman": 3500, "Expert": 8000, "Artisan": 15200}
 
 RECIPE_DEPTH = 3
 
-# The Favor goals the Options picker lists: itemID -> (Favor, gold copper, standing needed, what it
-# is, side or None).
-# From guides and Wowhead (no vendor data yet); recorded vendor prices replace the Favor and copper.
+# The rewards the goal dropdown lists: itemID -> (Favor, gold copper, standing needed, what it is,
+# side or None). From guides and Wowhead; recorded vendor prices replace the Favor and copper, and
+# the game data's rank gate (ItemSparse MinReputation) replaces the standing.
 # Standing: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted; 0 = none.
 GOALS = {
     262766: (6000, 0, 8, "Pack Kodo mount (needs level 60 and Journeyman Riding)", None),
@@ -66,6 +68,17 @@ GOALS = {
     271626: (1000, 0, 0, "Leatherworking Certification title (needs skill 300)", None),
     271627: (1000, 0, 0, "Tailoring Certification title (needs skill 300)", None),
 }
+# Rewards that aren't goals but belong in the Rewards tab: itemID -> (Favor, standing, what it is).
+OTHER_REWARDS = {
+    262902: (15, 5, "Forged Delivery Receipt: on an empty crate, 50 rep"),
+    262896: (15, 6, "Forger's Quill: rerolls a writ into another of its tier"),
+}
+# Ranks that only guides give (the game checks them on its side). Anything else with no rank in the
+# game data needs none.
+GUIDE_STANDING = {262902: 5, 262896: 6, 284664: 7, 262766: 8}
+# Which side a vendor's camp is on, by the map it stands on.
+CAMP_MAPS = {1433: "Alliance", 1413: "Horde"}
+RECIPE_PREFIXES = ("Pattern: ", "Plans: ", "Formula: ", "Recipe: ", "Schematic: ")
 
 
 def die(msg):
@@ -271,7 +284,32 @@ def main():
                 vendor_prices[item] = min(vendor_prices.get(item, per), per)
             for c in e.get("costItems", []):
                 if c.get("currencyId") == FAVOR_CURRENCY:
-                    rewards[item] = (c["amount"], full_price(e.get("costs")))
+                    r = rewards.setdefault(item, {"favor": c["amount"], "copper": full_price(e.get("costs")), "sellers": {}})
+                    pos = (v.get("positions") or [{}])[0]
+                    side = CAMP_MAPS.get(pos.get("uiMap"))
+                    if side and v.get("name"):
+                        r["sellers"][side] = (v["name"], pos.get("uiMap"), pos.get("mapX"), pos.get("mapY"))
+
+    # The rank each reward needs, its side, its profession, and what it is.
+    for i, (favor, copper, standing, what, side) in GOALS.items():
+        r = rewards.setdefault(i, {"favor": favor, "copper": copper, "sellers": {}})
+        r.update(goal=True, what=what)
+    for i, (favor, standing, what) in OTHER_REWARDS.items():
+        r = rewards.setdefault(i, {"favor": favor, "copper": 0, "sellers": {}})
+        r["what"] = what
+    for i, r in rewards.items():
+        row = items.get(i, {})
+        faction = int(row.get("MinFactionID") or 0)
+        if faction in FACTIONS.values():
+            r["standing"], r["guide"] = int(row["MinReputation"]) + 1, False
+            r["side"] = next(s for s, f in FACTIONS.items() if f == faction)
+        else:
+            r["standing"], r["guide"] = GUIDE_STANDING.get(i, 0), i in GUIDE_STANDING
+            r["side"] = GOALS.get(i, (0, 0, 0, "", None))[4]
+        n = name(i) or ""
+        skill = int(row.get("RequiredSkill") or 0)
+        if n.startswith(RECIPE_PREFIXES) and skill in PROFESSIONS:
+            r["profession"] = PROFESSIONS[skill]
 
     # --- The camps.
     def npc(npc_id, fallback_name):
@@ -294,14 +332,7 @@ def main():
     mentioned |= {p for rc in recipes.values() for p in [rc["product"]]}
     item_names = {i: name(i) for i in mentioned if name(i)}
 
-    goals = {}
-    for i, (favor, copper, standing, what, side) in GOALS.items():
-        if i in rewards:
-            favor, copper = rewards[i]
-        goals[i] = (favor, copper, standing, what, side)
-    item_names.update({i: name(i) for i in goals if name(i)})
-
-    write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, item_names)
+    write(writs, crates, sealed, recipes, vendor_prices, rewards, camps, item_names)
     print(f"Wrote {OUT.relative_to(ROOT)}: {len(writs)} writs, {len(crates)} crates, {len(recipes)} recipes, "
           f"{len(vendor_prices)} vendor prices, {len(rewards)} Favor rewards, {len(item_names)} item names")
 
@@ -323,7 +354,7 @@ def pairs_lua(lst):
     return "{ " + ", ".join(f"{{ {a}, {b} }}" for a, b in lst) + " }"
 
 
-def write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, item_names):
+def write(writs, crates, sealed, recipes, vendor_prices, rewards, camps, item_names):
     build = (SOURCE / "BUILD").read_text().strip() if (SOURCE / "BUILD").exists() else "?"
     L = []
     w = L.append
@@ -393,20 +424,27 @@ def write(writs, crates, sealed, recipes, vendor_prices, rewards, goals, camps, 
         w(f"\t[{i}] = {num(round(vendor_prices[i], 2))},")
     w("}")
     w("")
-    w("-- itemID = { favor, copper } sold for Merchant's Favor (rank gates aren't recorded)")
+    w("-- What Merchant's Favor buys: itemID = { favor, copper, standing (needed: 5 Friendly ... 8 Exalted,")
+    w("-- 0 none), guide (the standing is from guides, not the game data), side (nil: both), profession")
+    w("-- (recipes), what (what it is), goal (listed in the goal dropdown), sellers = { side = { name,")
+    w("-- map, x, y } } }")
     w("D.rewards = {")
     for i in sorted(rewards):
-        f, c = rewards[i]
-        w(f"\t[{i}] = {{ {f}, {c} }},")
-    w("}")
-    w("")
-    w("-- The Favor goals Options lists: itemID = { favor, copper, standing needed (0 none), what it is,")
-    w("-- side (nil: both) }")
-    w("D.goals = {")
-    for i in sorted(goals):
-        f, c, st, what, side = goals[i]
-        side_lua = f'"{side}"' if side else "nil"
-        w(f"\t[{i}] = {{ {f}, {c}, {st}, {lua_str(what)}, {side_lua} }},")
+        r = rewards[i]
+        parts = [f"favor = {r['favor']}", f"copper = {r['copper']}", f"standing = {r['standing']}"]
+        if r.get("guide"):
+            parts.append("guide = true")
+        if r.get("side"):
+            parts.append(f'side = "{r["side"]}"')
+        if r.get("profession"):
+            parts.append(f'profession = "{r["profession"]}"')
+        if r.get("what"):
+            parts.append(f"what = {lua_str(r['what'])}")
+        if r.get("goal"):
+            parts.append("goal = true")
+        if r["sellers"]:
+            parts.append("sellers = { " + ", ".join(f"{s} = {pos_lua(p)}" for s, p in sorted(r["sellers"].items())) + " }")
+        w(f"\t[{i}] = {{ {', '.join(parts)} }},")
     w("}")
     w("")
     w("D.itemNames = {")
