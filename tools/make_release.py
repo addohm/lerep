@@ -1,8 +1,8 @@
-"""Builds release/Lerep-<version>.zip from the committed addon files (from leprofit's).
+"""Builds release/leRep-<version>.zip from the committed addon files (from leprofit's).
 
-The version comes from ## Version in Lerep/Lerep.toc. Only files tracked by git under Lerep/ go in,
+The version comes from ## Version in leRep/leRep.toc. Only files tracked by git under leRep/ go in,
 so the zip matches what's committed (Build.lua is the empty one: releases carry no build stamp).
-The zip holds the Lerep folder at its top level, as players unzip it into AddOns.
+The zip holds the leRep folder at its top level, as players unzip it into AddOns.
 Run from anywhere: python3 tools/make_release.py
 """
 import pathlib
@@ -23,12 +23,12 @@ def version_of(folder):
 
 
 def main():
-    folders = ["Lerep"]
-    version = version_of("Lerep")
+    folders = ["leRep"]
+    version = version_of("leRep")
     if subprocess.check_output(["git", "-C", str(ROOT), "status", "--porcelain", "--", *folders], text=True).strip():
-        sys.exit("Lerep/ has uncommitted changes: commit them first, so the zip matches a commit.")
+        sys.exit("leRep/ has uncommitted changes: commit them first, so the zip matches a commit.")
     files = subprocess.check_output(["git", "-C", str(ROOT), "ls-files", "--", *folders], text=True).split()
-    out = ROOT / "release" / f"Lerep-{version}.zip"
+    out = ROOT / "release" / f"leRep-{version}.zip"
     out.parent.mkdir(exist_ok=True)
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for name in sorted(files):

@@ -1,9 +1,9 @@
--- Lerep: settings, events and slash commands. Settings are per character (LerepCharDB, ns.db); what
--- you record (vendor prices, what turn-ins really gave) is shared by your characters (LerepDB,
+-- leRep: settings, events and slash commands. Settings are per character (leRepCharDB, ns.db); what
+-- you record (vendor prices, what turn-ins really gave) is shared by your characters (leRepDB,
 -- ns.adb).
 local ADDON, ns = ...
 
-ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until Lerep has its own art
+ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until leRep has its own art
 
 local DEFAULTS = {
 	targetStanding = 8,  -- the rank the plans aim for: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted
@@ -50,7 +50,7 @@ local function CopyDefaults(dst, src)
 end
 
 function ns.Print(msg)
-	print("|cffffd100Lerep|r: " .. msg)
+	print("|cffffd100leRep|r: " .. msg)
 end
 
 function ns.Version()
@@ -93,9 +93,9 @@ for _, e in ipairs({ "BAG_UPDATE_DELAYED", "AUCTION_HOUSE_CLOSED", "UPDATE_FACTI
 end
 events:SetScript("OnEvent", function(_, event, arg)
 	if event == "ADDON_LOADED" and arg == ADDON then
-		LerepCharDB = CopyDefaults(type(LerepCharDB) == "table" and LerepCharDB or {}, DEFAULTS)
-		LerepDB = CopyDefaults(type(LerepDB) == "table" and LerepDB or {}, ACCOUNT_DEFAULTS)
-		ns.db, ns.adb = LerepCharDB, LerepDB
+		leRepCharDB = CopyDefaults(type(leRepCharDB) == "table" and leRepCharDB or {}, DEFAULTS)
+		leRepDB = CopyDefaults(type(leRepDB) == "table" and leRepDB or {}, ACCOUNT_DEFAULTS)
+		ns.db, ns.adb = leRepCharDB, leRepDB
 	elseif event == "PLAYER_LOGIN" then
 		if ns.Minimap then ns.Minimap.Init() end
 		ns.Changed()
@@ -121,7 +121,7 @@ local function Status()
 		ns.Faction.LabelDone() and "handed in" or "not handed in yet"))
 	local known = 0
 	for _ in pairs(ns.db.known) do known = known + 1 end
-	ns.Print(("%d of the recipes Lerep tracks (writ items, crate bundles, Favor patterns) are known by this character%s."):format(known,
+	ns.Print(("%d of the recipes leRep tracks (writ items, crate bundles, Favor patterns) are known by this character%s."):format(known,
 		known == 0 and " (open your profession windows once to read them)" or ""))
 end
 

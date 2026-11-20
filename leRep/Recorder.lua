@@ -1,4 +1,4 @@
--- Lerep: what the game shows you. The recipes you know (profession windows), vendor prices and the
+-- leRep: what the game shows you. The recipes you know (profession windows), vendor prices and the
 -- receipt's price (vendors), and what each turn-in really gave: rep for writs (your rep bonus),
 -- Favor for filled crates, and what Coin Pouches hold. These replace the data's guesses.
 local _, ns = ...
@@ -9,14 +9,14 @@ ns.Recorder = Recorder
 
 -- Recipes you know -------------------------------------------------------------------------------
 
--- Every recipe in Lerep's data that this character knows: the profession window's list, or the
+-- Every recipe in leRep's data that this character knows: the profession window's list, or the
 -- game's own spell check.
 function Recorder.Knows(recipeID)
 	if ns.db.known[recipeID] then return true end
 	return Try(IsPlayerSpell, recipeID) and true or false
 end
 
--- The recipes Lerep cares about: those in its data, and those the Favor patterns teach.
+-- The recipes leRep cares about: those in its data, and those the Favor patterns teach.
 local wanted
 local function Wanted(id)
 	if not wanted then
@@ -153,7 +153,7 @@ function Recorder.TurnedIn(questID)
 			local bonus = math.floor((rep / writ.rep - 1) * 50 + 0.5) * 2
 			if bonus >= 0 and bonus <= 10 and bonus ~= ns.db.repBonus then
 				ns.db.repBonus = bonus
-				ns.Print(("you get %d%% more rep per turn-in; Lerep plans with that now."):format(bonus))
+				ns.Print(("you get %d%% more rep per turn-in; leRep plans with that now."):format(bonus))
 			end
 		elseif crate and favor > 0 then
 			-- A Performance Bonus can double it: keep the least seen.

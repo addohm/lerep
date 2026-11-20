@@ -1,4 +1,4 @@
--- Lerep: a draggable minimap button (no libraries, from leprofit and leboof), and the game's addon
+-- leRep: a draggable minimap button (no libraries, from leprofit and leboof), and the game's addon
 -- compartment entry. Left-click opens the window on the plan you followed last; right-click on Options.
 local _, ns = ...
 
@@ -27,7 +27,7 @@ local function OnClick(mouseButton)
 end
 
 local function Build()
-	button = CreateFrame("Button", "LerepMinimapButton", Minimap)
+	button = CreateFrame("Button", "leRepMinimapButton", Minimap)
 	button:SetSize(31, 31)
 	button:SetFrameStrata("MEDIUM")
 	button:SetFrameLevel(8)
@@ -56,7 +56,7 @@ local function Build()
 	button:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
 	button:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-		GameTooltip:AddLine("Lerep")
+		GameTooltip:AddLine("leRep")
 		GameTooltip:AddLine("Click for your cheapest path to rep and Favor.", 1, 1, 1)
 		GameTooltip:AddLine("Right-click for options.", 1, 1, 1)
 		GameTooltip:AddLine("Drag to move this button.", 0.7, 0.7, 0.7)
@@ -66,7 +66,7 @@ local function Build()
 end
 
 -- The game's addon menu by the minimap (AddonCompartmentFunc in the .toc).
-function Lerep_OnAddonCompartmentClick(_, mouseButton)
+function leRep_OnAddonCompartmentClick(_, mouseButton)
 	OnClick(mouseButton)
 end
 

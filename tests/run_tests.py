@@ -1,4 +1,4 @@
-"""Lerep's checks: Lua 5.1 syntax, the TOC's file list, globals, and the scenarios in smoke.lua
+"""leRep's checks: Lua 5.1 syntax, the TOC's file list, globals, and the scenarios in smoke.lua
 against the fake client in wowmock.lua.
 
 Run: .venv/bin/python tests/run_tests.py   (needs lupa: python3 -m venv .venv && .venv/bin/pip install lupa)
@@ -14,9 +14,9 @@ except ImportError:
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TESTS = ROOT / "tests"
-CORE = "Lerep"
-ALLOWED_GLOBALS = {"LerepDB", "LerepCharDB", "LerepFrame", "LerepMinimapButton", "LerepConfirm",
-                   "SLASH_LEREP1", "Lerep_OnAddonCompartmentClick"}
+CORE = "leRep"
+ALLOWED_GLOBALS = {"leRepDB", "leRepCharDB", "leRepFrame", "leRepMinimapButton", "leRepConfirm",
+                   "SLASH_LEREP1", "leRep_OnAddonCompartmentClick"}
 
 OPTIONAL_GLOBALS = {"GetTradeSkillLine", "GetMerchantItemInfo", "GetProfessions", "GetProfessionInfo",
                     "GetCoinTextureString", "GetItemCount", "GetItemInfo", "issecretvalue", "TSM_API"}

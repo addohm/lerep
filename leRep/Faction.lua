@@ -1,4 +1,4 @@
--- Lerep: your trade faction. Which one is yours, your standing and Merchant's Favor, what you've done
+-- leRep: your trade faction. Which one is yours, your standing and Merchant's Favor, what you've done
 -- today, and what each turn-in gives: the data's numbers, replaced by what you've seen in game.
 local _, ns = ...
 local Try = ns.Try

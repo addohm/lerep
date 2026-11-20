@@ -1,4 +1,4 @@
--- Lerep: the plans. Each finds the cheapest gold path to its targets:
+-- leRep: the plans. Each finds the cheapest gold path to its targets:
 --   rank:     the target rank. Writs, the Shipping Label and receipts, cheapest gold per rep first,
 --             plus the crates its receipts' Favor needs.
 --   favor:    the Favor goal. Filled crates only, cheapest gold per Favor first.

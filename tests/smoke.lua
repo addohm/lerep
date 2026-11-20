@@ -1,5 +1,5 @@
--- Lerep's scenarios, run by run_tests.py against the fake client (WM). Each block sets the game up,
--- does something, and checks what Lerep made of it.
+-- leRep's scenarios, run by run_tests.py against the fake client (WM). Each block sets the game up,
+-- does something, and checks what leRep made of it.
 local D = ns.data
 
 local function eq(a, b, what)
@@ -46,7 +46,7 @@ do
 	WM.faction = "Alliance"
 end
 
--- Turn-in values: the data's guesses until Lerep has seen the real ones.
+-- Turn-in values: the data's guesses until leRep has seen the real ones.
 do
 	local crate = D.crates[248702] -- Apprentice Fabrics, green
 	eq(ns.Faction.CrateFavor(crate), 10, "green Apprentice crate, from the data")
@@ -311,7 +311,7 @@ do
 	ok(panel.totalText.text:find("To buy"), "shopping total")
 	WM.lists = {}
 	local n = ns.Shopping.SendToAuctionator()
-	ok(n and n > 0 and WM.lists.Lerep, "sent to Auctionator")
+	ok(n and n > 0 and WM.lists.leRep, "sent to Auctionator")
 end
 
 -- Options builds and its Defaults button works.

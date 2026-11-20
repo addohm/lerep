@@ -1,4 +1,4 @@
--- Lerep: the Shopping tab. Everything today's steps of the plan you followed last need, combined:
+-- leRep: the Shopping tab. Everything today's steps of the plan you followed last need, combined:
 -- crafted items broken down into their materials, what you hold counted once (need, have, buy,
 -- each, cost), the gold to spend, and Send to Auctionator.
 local _, ns = ...

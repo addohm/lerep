@@ -1,4 +1,4 @@
--- Lerep: the Rewards tab. What Merchant's Favor buys, grouped by the rank each reward needs, then the
+-- leRep: the Rewards tab. What Merchant's Favor buys, grouped by the rank each reward needs, then the
 -- ones any rank can buy, then the recipes: one line per profession, open for this character's
 -- professions (a click opens or closes one), with the recipes you know marked and last. It looks
 -- like the Combined tab: the rank and goal dropdowns, your rep and Favor, a box for the picked

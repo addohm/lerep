@@ -1,7 +1,7 @@
 @echo off
-rem Update this repo from GitHub, copy Lerep into the WoW: Forever client, and pack
-rem Lerep-<version>.zip on the desktop. Run it from a terminal (from any folder), then restart the
-rem client, or /reload if Lerep was already loaded. It only pulls what's on GitHub: push your commits
+rem Update this repo from GitHub, copy leRep into the WoW: Forever client, and pack
+rem leRep-<version>.zip on the desktop. Run it from a terminal (from any folder), then restart the
+rem client, or /reload if leRep was already loaded. It only pulls what's on GitHub: push your commits
 rem first.
 setlocal
 
@@ -24,8 +24,8 @@ set "RESULT=0"
 set "RESTART=0"
 set "LIST="
 
-if not exist "%REPO%\Lerep\Lerep.toc" (
-  echo Can't find the addon in "%REPO%\Lerep". Is this script in the repo's tools folder?
+if not exist "%REPO%\leRep\leRep.toc" (
+  echo Can't find the addon in "%REPO%\leRep". Is this script in the repo's tools folder?
   set "RESULT=1"
   goto done
 )
@@ -57,42 +57,44 @@ if errorlevel 1 (
   goto done
 )
 
-rem Builds before the rename were installed as "LeRep". Windows ignores letter case, so copying over
-rem that folder would keep the old spelling, which is the addon's name in game: remove it first.
-rem (findstr matches case, so this finds only the old spelling.)
-dir /b /ad "%ADDONS%" 2>nul | findstr /x /c:"LeRep" >nul && (
-  echo Removing the old "LeRep" folder: Lerep replaces it.
-  rmdir /s /q "%ADDONS%\LeRep"
+rem Earlier builds were installed as "LeRep" or "Lerep". Windows ignores letter case, so copying over
+rem such a folder would keep its old spelling, which is the addon's name in game: remove it first.
+rem findstr /i finds every spelling; "if" compares with case, so only the wrong ones go.
+for /f "delims=" %%d in ('dir /b /ad "%ADDONS%" 2^>nul ^| findstr /x /i /c:"leRep"') do (
+  if not "%%d"=="leRep" (
+    echo Removing the old "%%d" folder: leRep replaces it.
+    rmdir /s /q "%ADDONS%\%%d"
+  )
 )
 
-call :install Lerep
+call :install leRep
 if "%RESULT%"=="1" goto done
 
 rem Stamp the installed addon with the commit, so /lerep help shows which build is running.
 rem "-dirty" means the copy includes changes that aren't committed.
 for /f %%h in ('git -C "%REPO%" rev-parse --short HEAD') do set "BUILD=%%h"
-for /f %%s in ('git -C "%REPO%" status --porcelain -- Lerep') do set "BUILD=%BUILD%-dirty"
-> "%ADDONS%\Lerep\Build.lua" (
+for /f %%s in ('git -C "%REPO%" status --porcelain -- leRep') do set "BUILD=%BUILD%-dirty"
+> "%ADDONS%\leRep\Build.lua" (
   echo local _, ns = ...
   echo ns.build = "%BUILD%"
 )
 echo Installed build %BUILD%:%LIST%
 
-rem Also pack the committed addon as Lerep-<version>.zip on the desktop, ready to share or upload.
+rem Also pack the committed addon as leRep-<version>.zip on the desktop, ready to share or upload.
 rem git archive takes only committed files (without the build stamp above). The version is
-rem ## Version in Lerep.toc. The desktop comes from Windows, since OneDrive can move it.
+rem ## Version in leRep.toc. The desktop comes from Windows, since OneDrive can move it.
 set "VERSION="
-for /f "tokens=3" %%v in ('findstr /b /c:"## Version:" "%REPO%\Lerep\Lerep.toc"') do set "VERSION=%%v"
+for /f "tokens=3" %%v in ('findstr /b /c:"## Version:" "%REPO%\leRep\leRep.toc"') do set "VERSION=%%v"
 set "DESKTOP=%USERPROFILE%\Desktop"
 for /f "usebackq delims=" %%d in (`powershell -NoProfile -Command "[Environment]::GetFolderPath('Desktop')"`) do set "DESKTOP=%%d"
 if "%VERSION%"=="" (
-  echo No ## Version in Lerep.toc, so no zip was made.
+  echo No ## Version in leRep.toc, so no zip was made.
 ) else (
-  git -C "%REPO%" archive --format=zip --output="%DESKTOP%\Lerep-%VERSION%.zip" HEAD %LIST%
+  git -C "%REPO%" archive --format=zip --output="%DESKTOP%\leRep-%VERSION%.zip" HEAD %LIST%
   if errorlevel 1 (
-    echo Couldn't write "%DESKTOP%\Lerep-%VERSION%.zip".
+    echo Couldn't write "%DESKTOP%\leRep-%VERSION%.zip".
   ) else (
-    echo Packed "%DESKTOP%\Lerep-%VERSION%.zip" from the last commit.
+    echo Packed "%DESKTOP%\leRep-%VERSION%.zip" from the last commit.
   )
 )
 if "%RESTART%"=="1" (

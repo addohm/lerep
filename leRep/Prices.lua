@@ -1,5 +1,5 @@
--- Lerep: prices (from leprofit). Auction prices come from Auctionator or TradeSkillMaster on this
--- computer (their own scans); vendor prices from what you recorded at vendors or Lerep's data. A
+-- leRep: prices (from leprofit). Auction prices come from Auctionator or TradeSkillMaster on this
+-- computer (their own scans); vendor prices from what you recorded at vendors or leRep's data. A
 -- vendor price wins; without one, the auction price.
 local ADDON, ns = ...
 
@@ -120,7 +120,7 @@ function Prices.Age(itemID)
 	return type(age) == "number" and age or nil
 end
 
--- What a vendor charges for one, if anyone has recorded it: you (Recorder.lua), Lerep's data, or
+-- What a vendor charges for one, if anyone has recorded it: you (Recorder.lua), leRep's data, or
 -- Auctionator, which records the same thing at every vendor you open (items in endless supply, the
 -- price for one).
 function Prices.Vendor(itemID)

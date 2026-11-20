@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Lerep. The format follows
+All notable changes to leRep. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
@@ -12,7 +12,7 @@ All notable changes to Lerep. The format follows
 - Docs filled in with what's known so far, with TODO questions (2026-11-19).
 - The agreed design in ROADMAP.md: Rank, Favor and Combined plans (2026-11-19).
 - The data: `tools/fetch_sources.py` and `tools/gen_data.py` build
-  `Lerep/Data.lua` from Forever's game data and Efficient Games' player data:
+  `leRep/Data.lua` from Forever's game data and Efficient Games' player data:
   150 writs, 30 crates with their bundles, 218 recipes behind writ items and
   crafted bundles, vendor prices, Favor rewards and goals, the camps.
 - The core: settings, Auctionator/TSM and vendor prices (from leprofit),
@@ -37,9 +37,9 @@ All notable changes to Lerep. The format follows
   reward needs (marked "?" where only guides give the rank), then any rank,
   then recipes by profession; who sells each. Clicking a reward makes it your
   Favor goal and raises the target rank when it needs more.
-- The addon is called Lerep (folder, title, saved settings `LerepDB` and
-  `LerepCharDB`); the repo is `addohm/lerep`. The install script removes an
-  installed `LeRep` folder from earlier builds.
+- The addon is called leRep (folder, title, saved settings `leRepDB` and
+  `leRepCharDB`); the repo is `addohm/lerep`. The install script removes an
+  installed `LeRep` or `Lerep` folder from earlier builds.
 - Tools: `tools/install_forever.cmd` (Windows install) and
   `tools/make_release.py` (the release zip); `TESTING.md`, the in-game
   checklist.

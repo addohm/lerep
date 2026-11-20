@@ -1,4 +1,4 @@
--- Lerep: the window, from leprofit's (leboof's style): tabs across the top, a Defaults button for the
+-- leRep: the window, from leprofit's (leboof's style): tabs across the top, a Defaults button for the
 -- page shown, a resize grip. Pages register with Window.AddPage.
 local _, ns = ...
 
@@ -102,7 +102,7 @@ local function AddResizeGrip()
 end
 
 local function Build()
-	frame = CreateFrame("Frame", "LerepFrame", UIParent, "BackdropTemplate")
+	frame = CreateFrame("Frame", "leRepFrame", UIParent, "BackdropTemplate")
 	local size = ns.db.window.size
 	if size then
 		frame:SetSize(math.max(MIN_W, math.min(MAX_W, size[1])), math.max(MIN_H, math.min(MAX_H, size[2])))
@@ -134,7 +134,7 @@ local function Build()
 		frame:SetPoint("CENTER")
 	end
 	frame:Hide()
-	tinsert(UISpecialFrames, "LerepFrame") -- Escape closes the window
+	tinsert(UISpecialFrames, "leRepFrame") -- Escape closes the window
 
 	-- Title bar: icon, name and close. The version and build are in chat (/lerep help).
 	local icon = frame:CreateTexture(nil, "ARTWORK")
@@ -143,7 +143,7 @@ local function Build()
 	icon:SetTexture(ns.ICON)
 	local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	title:SetPoint("LEFT", icon, "RIGHT", 6, 0)
-	title:SetText("Lerep")
+	title:SetText("leRep")
 
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	close:SetPoint("TOPRIGHT", -2, -2)

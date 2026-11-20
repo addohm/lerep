@@ -29,7 +29,7 @@ EG_DATASETS = ["quests.enUS", "npcs", "vendors", "turn_ins"]
 
 
 def get(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "Lerep-data-tool"})
+    req = urllib.request.Request(url, headers={"User-Agent": "leRep-data-tool"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return r.read()
 

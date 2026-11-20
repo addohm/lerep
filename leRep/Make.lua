@@ -1,4 +1,4 @@
--- Lerep: what one of an item costs you (from leprofit's make-vs-buy): the cheaper of buying it (a
+-- leRep: what one of an item costs you (from leprofit's make-vs-buy): the cheaper of buying it (a
 -- vendor's price, else the auction house's) and crafting it with a recipe this character knows,
 -- whose materials are priced the same way, three levels deep.
 local _, ns = ...
@@ -8,7 +8,7 @@ ns.Make = Make
 
 local MAX_DEPTH = 3
 
--- product itemID -> the recipes in Lerep's data that make it
+-- product itemID -> the recipes in leRep's data that make it
 local makers
 local function Makers(itemID)
 	if not makers then

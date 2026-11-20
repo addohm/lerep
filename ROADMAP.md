@@ -1,6 +1,6 @@
 # Roadmap
 
-What's done for Lerep, and what's next. Update it in the same commit as the
+What's done for leRep, and what's next. Update it in the same commit as the
 change.
 
 ## Done
@@ -32,7 +32,7 @@ change.
 ## Ideas
 
 - Map pins or a waypoint arrow to the camps and to each writ's customer.
-- Lerep's lines in ordinary item tooltips (gold per rep, "the plan needs N").
+- leRep's lines in ordinary item tooltips (gold per rep, "the plan needs N").
 - Materials on your alts.
 - Other reputations that have turn-ins.
 
@@ -125,5 +125,5 @@ Options.
 the README), plus what you record playing: standing, Favor, the scribe's
 receipt price and what each turn-in really gave.
 
-**Packaging:** one addon, `Lerep`, settings per character; leprofit's
+**Packaging:** one addon, `leRep`, settings per character; leprofit's
 install, release and test tools. Published on CurseForge and Wago.
