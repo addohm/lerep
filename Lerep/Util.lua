@@ -132,3 +132,17 @@ function ns.MoneyPlain(copper)
 	if s > 0 then return ("%ds %dc"):format(s, c) end
 	return c .. "c"
 end
+
+-- Your skill in a profession, or nil if you don't have it (from leprofit).
+function ns.Skill(profession)
+	for i = 1, (Try(GetNumSkillLines) or 0) do
+		local name, isHeader, _, rank = Try(GetSkillLineInfo, i)
+		if name == profession and not isHeader then return rank end
+	end
+	local a, b = Try(GetProfessions)
+	for _, index in ipairs({ a, b }) do
+		local name, _, rank = Try(GetProfessionInfo, index)
+		if name == profession then return rank end
+	end
+	return nil
+end

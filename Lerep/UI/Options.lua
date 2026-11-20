@@ -21,11 +21,11 @@ local function Build(panel)
 		ns.Choices.GoalKey, ns.Choices.SetGoal,
 		{ boxWidth = 210, tooltip = { "Favor goal", "Merchant's Favor for a reward, for the Favor and Combined plans. Type any amount below instead." } }))
 	stack:Add(UI.OptionEdit(panel, "Or an amount of Favor",
-		function() return ns.db.favorGoal > 0 and tostring(ns.db.favorGoal) or "" end,
+		function() local g = ns.Choices.FavorGoal() return g > 0 and tostring(g) or "" end,
 		function(text)
 			local n = tonumber(text)
 			if n and n >= 0 then
-				ns.db.favorGoal, ns.db.favorGoalItem = math.floor(n), nil
+				ns.db.favorGoal, ns.db.favorGoalItem, ns.db.favorGoalProf = math.floor(n), nil, nil
 				Changed()
 			end
 		end,

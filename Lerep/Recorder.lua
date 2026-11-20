@@ -16,13 +16,26 @@ function Recorder.Knows(recipeID)
 	return Try(IsPlayerSpell, recipeID) and true or false
 end
 
+-- The recipes Lerep cares about: those in its data, and those the Favor patterns teach.
+local wanted
+local function Wanted(id)
+	if not wanted then
+		wanted = {}
+		for rid in pairs(ns.data.recipes) do wanted[rid] = true end
+		for _, r in pairs(ns.data.rewards) do
+			if r.teaches then wanted[r.teaches] = true end
+		end
+	end
+	return wanted[id]
+end
+
 function Recorder.ReadProfession()
 	local api = C_TradeSkillUI
 	local ids = api and Try(api.GetAllRecipeIDs)
 	if not ids then return end
 	local changed = false
 	for _, id in ipairs(ids) do
-		if ns.data.recipes[id] then
+		if Wanted(id) then
 			local info = Try(api.GetRecipeInfo, id)
 			local learned = info and info.learned and true or nil
 			if ns.db.known[id] ~= learned then
@@ -200,6 +213,9 @@ events:SetScript("OnEvent", function(_, event, arg)
 		Recorder.TurnedIn(arg)
 	elseif event == "BAG_UPDATE_DELAYED" or event == "PLAYER_MONEY" or event == "PLAYER_LOGIN" then
 		Recorder.CheckPouches()
+	elseif event == "NEW_RECIPE_LEARNED" and type(arg) == "number" and Wanted(arg) then
+		ns.db.known[arg] = true
+		ns.Changed()
 	elseif not pending then
 		-- Profession events come several at a time: read once, half a second after the last.
 		pending = true

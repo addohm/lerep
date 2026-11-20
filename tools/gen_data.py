@@ -165,7 +165,14 @@ def main():
     spell_names = {int(r["ID"]): r["Name_lang"] for r in table("SpellName")} if (SOURCE / "SpellName.csv").exists() else {}
 
     # --- Crates and their bundles.
-    effect_spell = {int(r["ID"]): int(r["SpellID"]) for r in table("ItemEffect")}
+    item_effects = {int(r["ID"]): r for r in table("ItemEffect")}
+    effect_spell = {i: int(r["SpellID"]) for i, r in item_effects.items()}
+    # A recipe item's "learn" effect (trigger type 6) names the recipe it teaches.
+    teaches = {}
+    for r in table("ItemXItemEffect"):
+        e = item_effects.get(int(r["ItemEffectID"]))
+        if e and e["TriggerType"] == "6":
+            teaches[int(r["ItemID"])] = int(e["SpellID"])
     item_spells = {}
     for r in table("ItemXItemEffect"):
         item_spells.setdefault(int(r["ItemID"]), []).append(effect_spell.get(int(r["ItemEffectID"])))
@@ -310,6 +317,8 @@ def main():
         skill = int(row.get("RequiredSkill") or 0)
         if n.startswith(RECIPE_PREFIXES) and skill in PROFESSIONS:
             r["profession"] = PROFESSIONS[skill]
+            if i in teaches:
+                r["teaches"] = teaches[i]
 
     # --- The camps.
     def npc(npc_id, fallback_name):
@@ -426,7 +435,8 @@ def write(writs, crates, sealed, recipes, vendor_prices, rewards, camps, item_na
     w("")
     w("-- What Merchant's Favor buys: itemID = { favor, copper, standing (needed: 5 Friendly ... 8 Exalted,")
     w("-- 0 none), guide (the standing is from guides, not the game data), side (nil: both), profession")
-    w("-- (recipes), what (what it is), goal (listed in the goal dropdown), sellers = { side = { name,")
+    w("-- (recipes), teaches (the recipe it teaches), what (what it is), goal (listed in the goal")
+    w("-- dropdown), sellers = { side = { name,")
     w("-- map, x, y } } }")
     w("D.rewards = {")
     for i in sorted(rewards):
@@ -438,6 +448,8 @@ def write(writs, crates, sealed, recipes, vendor_prices, rewards, camps, item_na
             parts.append(f'side = "{r["side"]}"')
         if r.get("profession"):
             parts.append(f'profession = "{r["profession"]}"')
+        if r.get("teaches"):
+            parts.append(f"teaches = {r['teaches']}")
         if r.get("what"):
             parts.append(f"what = {lua_str(r['what'])}")
         if r.get("goal"):

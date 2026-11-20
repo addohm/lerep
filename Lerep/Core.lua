@@ -9,6 +9,7 @@ local DEFAULTS = {
 	targetStanding = 8,  -- the rank the plans aim for: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted
 	favorGoal = 0,       -- Merchant's Favor the plans aim for (on top of what receipts need)
 	favorGoalItem = nil, -- the reward picked for it, if one was (itemID)
+	favorGoalProf = nil, -- or a profession: every one of its recipes you don't have yet
 	repBonus = 0,        -- percent more rep per turn-in (the Diplomat Legacy perk: 2 per rank)
 	favorBonus = 0,      -- percent chance a filled crate pays double Favor (the Performance Bonus perk)
 	days = 7,            -- finish within this many days (0: no limit); writs are once a day each
@@ -16,7 +17,8 @@ local DEFAULTS = {
 	usePouch = true,     -- take the Coin Pouch a writ pays off its cost
 	lastPlan = "combined", -- the plan tab opened last: Shopping and the step alerts follow it
 	stepAlerts = true,   -- say in chat when a step is done
-	rewardsOpen = {},    -- profession -> true: its recipes are open on the Rewards tab
+	rewardsOpen = {},    -- profession -> true/false: its recipes opened or closed on the Rewards tab (else
+	                     -- open for this character's professions)
 	known = {},          -- recipeSpellID -> true: recipes this character knows (read from the profession window)
 	window = {},         -- the window: pos, size, tab
 	minimap = { angle = 325, hide = false }, -- clear of Nothing Wasted, Ticky, Leboof, Leproc and Leprofit (200-300)
@@ -24,7 +26,7 @@ local DEFAULTS = {
 ns.DEFAULTS = DEFAULTS
 
 -- The settings the Options tab's Defaults button puts back.
-ns.OPTION_KEYS = { "targetStanding", "favorGoal", "favorGoalItem", "days", "repBonus", "favorBonus", "writAgeDays", "usePouch", "stepAlerts" }
+ns.OPTION_KEYS = { "targetStanding", "favorGoal", "favorGoalItem", "favorGoalProf", "days", "repBonus", "favorBonus", "writAgeDays", "usePouch", "stepAlerts" }
 
 local ACCOUNT_DEFAULTS = {
 	vendorPrices = {}, -- itemID -> copper for one, recorded at vendors
@@ -119,7 +121,7 @@ local function Status()
 		ns.Faction.LabelDone() and "handed in" or "not handed in yet"))
 	local known = 0
 	for _ in pairs(ns.db.known) do known = known + 1 end
-	ns.Print(("%d of the recipes behind writ items and crate bundles are known by this character%s."):format(known,
+	ns.Print(("%d of the recipes Lerep tracks (writ items, crate bundles, Favor patterns) are known by this character%s."):format(known,
 		known == 0 and " (open your profession windows once to read them)" or ""))
 end
 

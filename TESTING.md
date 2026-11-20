@@ -41,7 +41,12 @@ Scan the auction house with Auctionator first.
       heading says unlocked or how much rep to go. Only your side's tabard and sign are listed.
 - [ ] A "?" after a rank: its tooltip says the rank is from guides. Hovering any reward shows the
       item's own tooltip with its Favor price.
-- [ ] A profession line opens and closes its recipes.
+- [ ] Your own professions' recipe lists are open when you first look; any line opens and closes
+      with a click, and stays that way.
+- [ ] Recipes you know say "known" (and ones whose pattern is in your bags "in your bags") and
+      come last in their list.
+- [ ] "All" on a profession line makes "All <profession> recipes (N left, Favor)" the goal; learning
+      one of them (or buying its pattern) shrinks it.
 - [ ] Clicking a reward makes it the Favor goal (the goal dropdown shows it) and raises the target
       rank if it needs more; the box says "Your goal" and the Combined plan's cost.
 - [ ] The box names who sells it and where (or your camp, where no seller is recorded).

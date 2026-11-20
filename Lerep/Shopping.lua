@@ -92,6 +92,38 @@ function ns.Choices.RewardName(item)
 	return r and r.what and (r.what:gsub(" %(.*%)", ""):gsub(":.*", "")) or ns.ItemName(item)
 end
 
+-- Whether you already have a reward that's a recipe: you know what it teaches, or its pattern is in
+-- your bags.
+function ns.Choices.Have(item)
+	local r = ns.data.rewards[item]
+	if not (r and r.teaches) then return false end
+	return ns.Recorder.Knows(r.teaches) or ns.BagCount(item) > 0
+end
+
+-- A profession's recipes in the rewards: { all = n, left = { itemIDs you don't have }, favor (for
+-- those left), copper, standing (the highest any left needs) }.
+function ns.Choices.ProfessionRecipes(prof)
+	local t = { all = 0, left = {}, favor = 0, copper = 0, standing = 0 }
+	for item, r in pairs(ns.data.rewards) do
+		if r.profession == prof and ns.Choices.ForMySide(r) then
+			t.all = t.all + 1
+			if not ns.Choices.Have(item) then
+				table.insert(t.left, item)
+				t.favor, t.copper = t.favor + r.favor, t.copper + r.copper
+				t.standing = math.max(t.standing, r.standing)
+			end
+		end
+	end
+	table.sort(t.left)
+	return t
+end
+
+-- The Favor the plans aim for: a profession's recipes left, else the goal amount.
+function ns.Choices.FavorGoal()
+	if ns.db.favorGoalProf then return ns.Choices.ProfessionRecipes(ns.db.favorGoalProf).favor end
+	return ns.db.favorGoal or 0
+end
+
 -- The Favor goals: none, the main rewards (cheapest first) plus any other reward picked on the
 -- Rewards tab, or the amount typed in Options.
 function ns.Choices.Goals()
@@ -109,7 +141,10 @@ function ns.Choices.Goals()
 	for _, r in ipairs(rewards) do
 		list[#list + 1] = { "item:" .. r.item, ("%s (%d)"):format(ns.Choices.RewardName(r.item), r.favor) }
 	end
-	if ns.db.favorGoal > 0 and not ns.db.favorGoalItem then
+	if ns.db.favorGoalProf then
+		local t = ns.Choices.ProfessionRecipes(ns.db.favorGoalProf)
+		list[#list + 1] = { "prof:" .. ns.db.favorGoalProf, ("All %s recipes (%d left, %d)"):format(ns.db.favorGoalProf, #t.left, t.favor) }
+	elseif ns.db.favorGoal > 0 and not ns.db.favorGoalItem then
 		list[#list + 1] = { "amount", ("%d Favor"):format(ns.db.favorGoal) }
 	end
 	return list
@@ -117,19 +152,29 @@ end
 
 -- The current Favor goal as a choice key.
 function ns.Choices.GoalKey()
+	if ns.db.favorGoalProf then return "prof:" .. ns.db.favorGoalProf end
 	if ns.db.favorGoal == 0 then return 0 end
 	if ns.db.favorGoalItem then return "item:" .. ns.db.favorGoalItem end
 	return "amount"
 end
 
+-- Sets the goal: 0 (none), "item:<id>" (one reward) or "prof:<profession>" (its recipes you don't
+-- have yet). A reward that needs a higher rank than the target raises the target.
 function ns.Choices.SetGoal(key)
+	local standing = 0
 	if key == 0 then
-		ns.db.favorGoal, ns.db.favorGoalItem = 0, nil
+		ns.db.favorGoal, ns.db.favorGoalItem, ns.db.favorGoalProf = 0, nil, nil
 	elseif type(key) == "string" and key:find("^item:") then
 		local item = tonumber(key:match("%d+"))
 		local r = ns.data.rewards[item]
 		if not r then return end
-		ns.db.favorGoal, ns.db.favorGoalItem = r.favor, item
+		ns.db.favorGoal, ns.db.favorGoalItem, ns.db.favorGoalProf = r.favor, item, nil
+		standing = r.standing
+	elseif type(key) == "string" and key:find("^prof:") then
+		local prof = key:sub(6)
+		ns.db.favorGoal, ns.db.favorGoalItem, ns.db.favorGoalProf = 0, nil, prof
+		standing = ns.Choices.ProfessionRecipes(prof).standing
 	end
+	if standing > (ns.db.targetStanding or 0) then ns.db.targetStanding = standing end
 	ns.Changed()
 end

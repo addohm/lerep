@@ -127,7 +127,7 @@ local function Work(kind)
 	value = value or 0
 	plan.standing, plan.value = standing, value
 	plan.needRep = wantRep and ns.Faction.RepToGo(db.targetStanding) or 0
-	plan.goal = wantFavor and (db.favorGoal or 0) or 0
+	plan.goal = wantFavor and ns.Choices.FavorGoal() or 0
 	plan.held = ns.Faction.Favor()
 	plan.receiptFavor = ns.Faction.ReceiptFavor()
 

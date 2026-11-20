@@ -1,8 +1,9 @@
 -- Lerep: the Rewards tab. What Merchant's Favor buys, grouped by the rank each reward needs, then the
--- ones any rank can buy, then the recipes (one line per profession, opened with a click). It looks
+-- ones any rank can buy, then the recipes: one line per profession, open for this character's
+-- professions (a click opens or closes one), with the recipes you know marked and last. It looks
 -- like the Combined tab: the rank and goal dropdowns, your rep and Favor, a box for the picked
--- reward, the list below. Clicking a reward makes it your Favor goal, and raises the target rank
--- when it needs a higher one.
+-- reward, the list below. Clicking a reward makes it your Favor goal; a profession line's "All"
+-- makes every recipe of it you don't have yet the goal. Either raises the target rank when needed.
 local _, ns = ...
 
 local GREY, ORANGE, GREEN, GOLD = "|cff9d9d9d", "|cffff9933", "|cff1eff00", "|cffffd100"
@@ -73,9 +74,15 @@ local function Entries()
 	ns.db.rewardsOpen = ns.db.rewardsOpen or {}
 	for _, prof in ipairs(profs) do
 		local open = ns.db.rewardsOpen[prof]
-		list[#list + 1] = { kind = "prof", profession = prof, count = #recipes[prof], open = open }
+		if open == nil then open = ns.Skill(prof) ~= nil end
+		local t = ns.Choices.ProfessionRecipes(prof)
+		list[#list + 1] = { kind = "prof", profession = prof, count = t.all, left = #t.left, favor = t.favor, open = open }
 		if open then
-			table.sort(recipes[prof], ByFavor)
+			for _, e in ipairs(recipes[prof]) do e.have = ns.Choices.Have(e.item) end
+			table.sort(recipes[prof], function(a, b)
+				if a.have ~= b.have then return not a.have end
+				return ByFavor(a, b)
+			end)
 			for _, e in ipairs(recipes[prof]) do
 				e.indent = true
 				list[#list + 1] = e
@@ -86,12 +93,15 @@ local function Entries()
 end
 ns.RewardEntries = Entries -- (tests)
 
--- Makes a reward the Favor goal; raises the target rank if it needs a higher one.
+-- Makes a reward, or a profession's recipes ("prof:<name>"), the Favor goal.
 local function Pick(item)
-	local r = ns.data.rewards[item]
-	if not r then return end
+	if type(item) == "string" then
+		selected = item
+		ns.Choices.SetGoal(item)
+		return
+	end
+	if not ns.data.rewards[item] then return end
 	selected = item
-	if r.standing > (ns.db.targetStanding or 0) then ns.db.targetStanding = r.standing end
 	ns.Choices.SetGoal("item:" .. item)
 end
 ns.PickReward = Pick -- (tests)
@@ -118,6 +128,25 @@ local function Row(i)
 		r.cols[c] = fs
 	end
 	r:SetHighlightTexture("Interface\\Buttons\\UI-Listbox-Highlight2", "ADD")
+	-- A profession line's "All": every recipe of it you don't have yet becomes the goal.
+	r.all = CreateFrame("Button", nil, r, "UIPanelButtonTemplate")
+	r.all:SetSize(COL_W - 14, ROW_H - 2)
+	r.all:SetPoint("RIGHT", -4, 0)
+	r.all:SetText("All")
+	r.all:SetScript("OnClick", function(self)
+		local e = self:GetParent().entry
+		if e and e.kind == "prof" then Pick("prof:" .. e.profession) end
+	end)
+	r.all:SetScript("OnEnter", function(self)
+		local e = self:GetParent().entry
+		if not e then return end
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:AddLine("All " .. e.profession .. " recipes")
+		GameTooltip:AddLine(("Make the %d you don't have yet your Favor goal (%s Favor). Each drops out once you learn it or its pattern is in your bags."):format(e.left, Number(e.favor)), 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	r.all:SetScript("OnLeave", GameTooltip_Hide)
+	r.all:Hide()
 	r:SetScript("OnEnter", function(self)
 		local e = self.entry
 		if not (e and e.kind == "reward") then return end
@@ -137,7 +166,7 @@ local function Row(i)
 		local e = self.entry
 		if not e then return end
 		if e.kind == "prof" then
-			ns.db.rewardsOpen[e.profession] = not e.open or nil
+			ns.db.rewardsOpen[e.profession] = not e.open
 			ns.Window.Refresh()
 		elseif e.kind == "reward" and not ns.ItemModifiedClick(e.item) then
 			Pick(e.item)
@@ -213,7 +242,37 @@ local function Build(p)
 	scroll:SetScript("OnSizeChanged", function(_, width) inner:SetWidth(width) end)
 end
 
+local function GoalLine()
+	local plan = ns.Planner.Get("combined")
+	return GREEN .. "Your goal.|r " .. (plan.camp and ("The Combined plan gets you there for " .. ns.Money(plan.cost)
+		.. (plan.days and plan.days > 1 and (" over " .. plan.days .. " days") or "") .. ".") or "")
+end
+
+-- The box for a profession's recipes ("prof:<name>").
+local function ShowProfession(prof)
+	local L = box.lines
+	local t = ns.Choices.ProfessionRecipes(prof)
+	box.icon:SetTexture(ns.ItemIcon(t.left[1] or next(ns.data.rewards)))
+	L[1]:SetText(("All %s recipes"):format(prof))
+	L[2]:SetText(("%d of %d left: %s Favor%s"):format(#t.left, t.all, Number(t.favor), t.copper > 0 and (" + " .. ns.Money(t.copper)) or "")
+		.. (t.standing > 0 and (GREY .. "  ·  |rNeeds " .. ns.Faction.StandingName(t.standing) .. ": " .. RankStatus(t.standing)) or ""))
+	local held = ns.Faction.Favor()
+	L[3]:SetText(("You have %s Favor%s"):format(Number(held), held >= t.favor and (": " .. GREEN .. "enough|r")
+		or (", " .. ORANGE .. Number(t.favor - held) .. " to go|r")))
+	local seller
+	for _, item in ipairs(t.left) do
+		local s = ns.data.rewards[item].sellers
+		seller = seller or (s and s[ns.Faction.Side() or ""])
+	end
+	local camp = ns.Faction.Camp()
+	L[4]:SetText(seller and (GOLD .. "Sold by|r " .. seller.name .. (camp and (", " .. camp.place) or "")
+		.. (seller.x and (" at %.1f, %.1f"):format(seller.x * 100, seller.y * 100) or ""))
+		or (GOLD .. "Sold at|r " .. (camp and camp.place or "your faction's camp")))
+	L[5]:SetText(ns.db.favorGoalProf == prof and GoalLine() or (GREY .. "Press All on its line to make them your Favor goal.|r"))
+end
+
 local function ShowReward(item)
+	if type(item) == "string" then return ShowProfession(item:sub(6)) end
 	local r = item and ns.data.rewards[item]
 	local L = box.lines
 	if not r then
@@ -240,10 +299,10 @@ local function ShowReward(item)
 	else
 		L[4]:SetText(GOLD .. "Sold at|r " .. (camp and camp.place or "your faction's camp"))
 	end
-	if ns.db.favorGoalItem == item then
-		local plan = ns.Planner.Get("combined")
-		L[5]:SetText(GREEN .. "Your goal.|r " .. (plan.camp and ("The Combined plan gets you there for " .. ns.Money(plan.cost)
-			.. (plan.days and plan.days > 1 and (" over " .. plan.days .. " days") or "") .. ".") or ""))
+	if ns.Choices.Have(item) then
+		L[5]:SetText(GREEN .. (ns.Recorder.Knows(r.teaches) and "You know this recipe." or "Its pattern is in your bags.") .. "|r")
+	elseif ns.db.favorGoalItem == item then
+		L[5]:SetText(GoalLine())
 	else
 		L[5]:SetText(GREY .. "Click it in the list to make it your Favor goal.|r")
 	end
@@ -259,12 +318,12 @@ local function Refresh()
 	repBar:SetValue(math.max(0, math.min(value, goal)))
 	repBar.text:SetText(camp and ("Rep: %s, %s of %s for %s"):format(ns.Faction.StandingName(standing), Number(value), Number(goal),
 		ns.Faction.StandingName(ns.db.targetStanding)) or "This character has no trade faction.")
-	local held, want = ns.Faction.Favor(), ns.db.favorGoal or 0
+	local held, want = ns.Faction.Favor(), ns.Choices.FavorGoal()
 	favorBar:SetMinMaxValues(0, math.max(want, 1))
 	favorBar:SetValue(math.min(held, want))
 	favorBar.text:SetText(("Merchant's Favor: %s held%s"):format(Number(held), want > 0 and (", goal " .. Number(want)) or ", no goal"))
 
-	selected = selected or ns.db.favorGoalItem
+	selected = selected or ns.db.favorGoalItem or (ns.db.favorGoalProf and ("prof:" .. ns.db.favorGoalProf))
 	ShowReward(selected)
 
 	local entries = Entries()
@@ -275,7 +334,8 @@ local function Refresh()
 		r.icon:ClearAllPoints()
 		r.name:ClearAllPoints()
 		r.name:SetPoint("RIGHT", r, "RIGHT", -(3 * COL_W + 4), 0)
-		r.mark:SetShown(e.kind == "reward" and e.item == ns.db.favorGoalItem)
+		r.mark:SetShown((e.kind == "reward" and e.item == ns.db.favorGoalItem) or (e.kind == "prof" and e.profession == ns.db.favorGoalProf))
+		r.all:SetShown(e.kind == "prof" and e.left > 0)
 		for c = 1, 3 do r.cols[c]:SetText("") end
 		if e.kind == "head" then
 			r.icon:Hide()
@@ -284,7 +344,10 @@ local function Refresh()
 		elseif e.kind == "prof" then
 			r.icon:Hide()
 			r.name:SetPoint("LEFT", 8, 0)
-			r.name:SetText((e.open and "- " or "+ ") .. e.profession .. GREY .. ("  %d recipe%s|r"):format(e.count, e.count == 1 and "" or "s"))
+			local known = e.count - e.left
+			r.name:SetText((e.open and "- " or "+ ") .. e.profession .. GREY .. ("  %d recipe%s%s|r"):format(e.count, e.count == 1 and "" or "s",
+				known > 0 and (", " .. known .. " you have") or ""))
+			r.cols[2]:SetText(e.left > 0 and Number(e.favor) or (GREEN .. "all|r"))
 		else
 			local x = e.indent and 24 or 8
 			r.icon:Show()
@@ -292,6 +355,7 @@ local function Refresh()
 			r.icon:SetTexture(ns.ItemIcon(e.item))
 			r.name:SetPoint("LEFT", x + 22, 0)
 			local name = e.r.profession and ns.ItemNameColored(e.item) or ns.Choices.RewardName(e.item)
+			if e.have then name = GREY .. ns.ItemName(e.item) .. "|r " .. GREEN .. (ns.Recorder.Knows(e.r.teaches) and "known" or "in your bags") .. "|r" end
 			r.name:SetText(name)
 			r.cols[1]:SetText(RankText(e.r))
 			r.cols[2]:SetText(Number(e.r.favor))

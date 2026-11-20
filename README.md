@@ -32,8 +32,11 @@ scan the auction house so Lerep has writ, crate and material prices.
   step to see it in the box; hover for detail. The totals say what the plan
   costs and how far the gold you carry goes.
 - **Rewards:** what Merchant's Favor buys, grouped by the rank it needs
-  (unlocked, or how much rep to go), then recipes by profession. Click one to
-  make it your Favor goal; the plans then work towards it.
+  (unlocked, or how much rep to go), then recipes by profession: your own
+  professions' lists are open, and recipes you know are marked and listed
+  last. Click a reward to make it your Favor goal; press All on a profession
+  to aim for every recipe of it you don't have yet (each drops out as you
+  learn it). The plans then work towards it.
 - **Shopping:** what today's steps need, for the plan tab you opened last:
   crafted items broken down into materials, less what you hold. Send to
   Auctionator makes a "Lerep" shopping list.

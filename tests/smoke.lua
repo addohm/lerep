@@ -394,6 +394,73 @@ do
 	WM.favor = 0
 end
 
+-- Your own professions' recipes are open on the Rewards tab; recipes you know are marked and last;
+-- "All" makes a profession's recipes you don't have yet the goal.
+do
+	local D = ns.data
+	WM.skills = { Blacksmithing = 150 }
+	WM.standing, WM.rep, WM.favor = 5, 3000, 0
+	bump()
+	local function Find(kind, prof)
+		for _, e in ipairs(ns.RewardEntries()) do
+			if e.kind == kind and e.profession == prof then return e end
+		end
+	end
+	ok(Find("prof", "Blacksmithing").open, "Blacksmithing opens by itself for a Blacksmith")
+	ok(not Find("prof", "Tailoring").open, "Tailoring stays shut")
+	ns.db.rewardsOpen.Blacksmithing = false
+	ok(not Find("prof", "Blacksmithing").open, "closing it is remembered")
+	ns.db.rewardsOpen.Blacksmithing = nil
+	-- Know one Blacksmithing recipe, hold the pattern of another.
+	local bs = {}
+	for item, r in pairs(D.rewards) do
+		if r.profession == "Blacksmithing" then bs[#bs + 1] = item end
+	end
+	table.sort(bs)
+	local all = ns.Choices.ProfessionRecipes("Blacksmithing")
+	eq(#all.left, #bs, "none known yet")
+	WM.spells[D.rewards[bs[1]].teaches] = true
+	WM.items[bs[2]] = { name = "a pattern", count = 1 }
+	bump()
+	local t = ns.Choices.ProfessionRecipes("Blacksmithing")
+	eq(#t.left, #bs - 2, "known and in-bags recipes drop out")
+	eq(t.favor, all.favor - D.rewards[bs[1]].favor - D.rewards[bs[2]].favor, "and their Favor")
+	local list, lastHave, firstHaveAt, lastNotAt = ns.RewardEntries(), false, nil, nil
+	for i, e in ipairs(list) do
+		if e.kind == "reward" and e.r.profession == "Blacksmithing" then
+			if e.have then firstHaveAt = firstHaveAt or i else lastNotAt = i end
+		end
+	end
+	ok(firstHaveAt and lastNotAt and firstHaveAt > lastNotAt, "recipes you have come last")
+	-- All Blacksmithing as the goal.
+	ns.Window.Select("rewards")
+	WM.RunTimers()
+	ns.PickReward("prof:Blacksmithing")
+	WM.RunTimers()
+	eq(ns.db.favorGoalProf, "Blacksmithing", "the profession is the goal")
+	eq(ns.Choices.FavorGoal(), t.favor, "the goal is what's left")
+	eq(ns.Planner.Get("favor").goal, t.favor, "the plans aim for it")
+	local panel = ns.Window.CurrentPanel()
+	ok(panel.box.lines[1].text == "All Blacksmithing recipes", "the box shows it: " .. tostring(panel.box.lines[1].text))
+	ok(panel.box.lines[5].text:find("Your goal"), "as the goal")
+	local root = WM.MenuRoot()
+	panel.goalDrop.menuGenerator(nil, root)
+	local shown
+	for _, r in ipairs(root.radios) do if r.isSelected() then shown = r.text end end
+	ok(shown and shown:find("All Blacksmithing recipes %(" .. #t.left .. " left"), "the dropdown shows it: " .. tostring(shown))
+	-- Learning one more shrinks the goal.
+	WM.Fire("NEW_RECIPE_LEARNED", D.rewards[bs[3]].teaches)
+	WM.RunTimers()
+	eq(ns.Choices.FavorGoal(), t.favor - D.rewards[bs[3]].favor, "learning one shrinks the goal")
+	-- Typing an amount replaces it.
+	ns.db.favorGoal, ns.db.favorGoalItem, ns.db.favorGoalProf = 500, nil, nil
+	eq(ns.Choices.FavorGoal(), 500, "an amount instead")
+	ns.Choices.SetGoal(0)
+	WM.skills, WM.spells, WM.items[bs[2]] = {}, {}, nil
+	ns.db.known = {}
+	ns.db.targetStanding = 6
+end
+
 -- /lerep status and help.
 do
 	WM.printed = {}

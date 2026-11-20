@@ -27,6 +27,10 @@ All notable changes to Lerep. The format follows
 - The window: Rank, Favor and Combined tabs (targets, progress, the current
   step and the route), Shopping with Send to Auctionator, Options; a minimap
   button and the addon menu entry; step alerts in chat.
+- Rewards: your own professions' recipe lists open by themselves; recipes you
+  know (or hold the pattern for) are marked and listed last; "All" on a
+  profession makes every recipe of it you don't have yet the Favor goal,
+  shrinking as you learn them.
 - Each plan's totals say how far your gold goes: the whole plan, or the rep
   (and Favor) it gets you to and how much you're short.
 - The Rewards tab: what Merchant's Favor buys, grouped by the rank each
