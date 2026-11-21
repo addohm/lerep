@@ -67,14 +67,21 @@ local function StepTooltip(owner, s)
 	if s.favor and s.favor ~= 0 then
 		GameTooltip:AddDoubleLine("Merchant's Favor", (s.favor > 0 and "+" or "") .. Number(s.favor), 1, 0.82, 0, 1, 1, 1)
 	end
-	if s.cost then GameTooltip:AddDoubleLine("Cost", ns.Money(s.cost), 1, 0.82, 0, 1, 1, 1) end
 	if s.writ then
+		-- The sum: the writ, its item, less the Coin Pouch it pays.
 		local l = s.writ
-		GameTooltip:AddDoubleLine("  The writ", l.held and "in your bags" or ns.Money(l.writPrice), 0.8, 0.8, 0.8, 1, 1, 1)
-		GameTooltip:AddDoubleLine("  " .. ns.ItemName(l.writ.item), ns.Money(l.itemPrice * l.writ.count) .. (l.itemHow == "craft" and " (craft it)" or ""), 0.8, 0.8, 0.8, 1, 1, 1)
-		local pouch = ns.Faction.PouchValue(l.writ.tier)
-		if pouch > 0 then GameTooltip:AddDoubleLine("  Coin Pouch", "-" .. ns.Money(pouch), 0.8, 0.8, 0.8, 1, 1, 1) end
-		GameTooltip:AddDoubleLine("  Per rep", ns.Money(l.cost / l.rep), 0.8, 0.8, 0.8, 1, 1, 1)
+		GameTooltip:AddDoubleLine("The writ", l.held and "in your bags" or ns.Money(l.writPrice), 0.8, 0.8, 0.8, 1, 1, 1)
+		GameTooltip:AddDoubleLine(ns.ItemName(l.writ.item), ns.Money(l.itemPrice * l.writ.count) .. (l.itemHow == "craft" and " (craft it)" or ""), 0.8, 0.8, 0.8, 1, 1, 1)
+		local pouch, seen, n = ns.Faction.PouchValue(l.writ.tier)
+		if pouch > 0 then
+			GameTooltip:AddDoubleLine("Coin Pouch", "-" .. ns.Money(pouch), 0.8, 0.8, 0.8, 1, 1, 1)
+			GameTooltip:AddLine(seen and ("  the average of the %d you've opened"):format(n)
+				or "  a guess until you've opened some", 0.6, 0.6, 0.6)
+		end
+		GameTooltip:AddDoubleLine(pouch > 0 and "After the Coin Pouch" or "Cost", ns.CostText(l.cost), 1, 0.82, 0, 1, 1, 1)
+		GameTooltip:AddDoubleLine("Per rep", ns.CostText(l.cost / l.rep), 1, 0.82, 0, 1, 1, 1)
+	elseif s.cost then
+		GameTooltip:AddDoubleLine("Cost", ns.CostText(s.cost), 1, 0.82, 0, 1, 1, 1)
 	end
 	GameTooltip:Show()
 end
@@ -235,6 +242,21 @@ local function MakePage(kind)
 			head.cols[c]:SetFontObject("GameFontNormalSmall")
 			head.cols[c]:SetText(text)
 		end
+		-- Hovering the Cost heading explains it.
+		local costHelp = CreateFrame("Frame", nil, head)
+		costHelp:SetPoint("TOPRIGHT", head, "TOPRIGHT", -4, 0)
+		costHelp:SetSize(COL_W - 4, ROW_H)
+		costHelp:EnableMouse(true)
+		costHelp:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_TOP")
+			GameTooltip:AddLine("Cost")
+			GameTooltip:AddLine("What the step costs at today's prices; what you hold counts at its price too. For a writ: the writ plus its item, less the Coin Pouch it pays.", 1, 1, 1, true)
+			GameTooltip:AddLine("|cff1eff00+|r in green: a gain. The Coin Pouch pays more than the writ and its item.", 1, 1, 1, true)
+			GameTooltip:Show()
+		end)
+		costHelp:SetScript("OnLeave", GameTooltip_Hide)
+		panel.costHelp = costHelp
+		panel.rows = rows -- (tests)
 		routeScroll = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
 		routeScroll:SetPoint("TOPLEFT", 0, top - STEP_H - 6 - ROW_H)
 		routeScroll:SetPoint("BOTTOMRIGHT", -24, 52)
@@ -279,7 +301,11 @@ local function MakePage(kind)
 		if s.favor and s.favor ~= 0 then
 			gives[#gives + 1] = (s.favor > 0 and (GREEN .. "+") or (ORANGE)) .. Number(s.favor) .. " Favor|r"
 		end
-		if s.cost and s.cost > 0 then gives[#gives + 1] = "costs " .. ns.Money(s.cost) end
+		if s.cost and s.cost < -0.5 then
+			gives[#gives + 1] = "you make " .. ns.CostText(s.cost)
+		elseif s.cost and s.cost > 0.5 then
+			gives[#gives + 1] = "costs " .. ns.Money(s.cost)
+		end
 		box.gives:SetText(table.concat(gives, GREY .. "  ·  |r") .. ((s.detail and s.detail ~= "") and ("  " .. GREY .. s.detail .. "|r") or ""))
 		box.where:SetText(s.where and (GOLD .. "Where:|r " .. s.where) or "")
 		local uses = s.uses or {}
@@ -368,7 +394,7 @@ local function MakePage(kind)
 			r.name:SetText((s.day == "later" and GREY or "") .. s.title .. (s.day == "later" and "|r" or ""))
 			r.cols[1]:SetText((s.rep and s.rep ~= 0) and Number(s.rep) or (GREY .. "-|r"))
 			r.cols[2]:SetText((s.favor and s.favor ~= 0) and ((s.favor < 0 and ORANGE or "") .. Number(s.favor)) or (GREY .. "-|r"))
-			r.cols[3]:SetText(s.cost and s.cost > 0 and ns.Money(s.cost) or (GREY .. "-|r"))
+			r.cols[3]:SetText(ns.CostText(s.cost))
 			r.highlight:SetShown(s.key == selected)
 			r:ClearAllPoints()
 			r:SetPoint("TOPLEFT", routeInner, "TOPLEFT", 0, -y)
@@ -381,7 +407,10 @@ local function MakePage(kind)
 
 		-- Totals and warnings.
 		local lines = {}
-		local total = ("Whole plan: %s"):format(ns.Money(plan.cost))
+		local total = ("Whole plan: %s"):format(ns.CostText(plan.cost))
+		if (plan.pouches or 0) > 0 then
+			total = total .. (" after Coin Pouches (%s before)"):format(ns.CostText(plan.cost + plan.pouches))
+		end
 		if plan.days and plan.days > 1 then total = total .. (" over %d days"):format(plan.days) end
 		total = total .. ("  ·  To buy today: %s"):format(ns.Money(plan.spend or 0))
 		lines[1] = total
@@ -419,7 +448,6 @@ local function MakePage(kind)
 		ns.db.lastPlan = kind
 		ns.watching = true
 	end
-	page.panelRows = function() return rows end
 	return page
 end
 

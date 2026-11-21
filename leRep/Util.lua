@@ -123,6 +123,14 @@ function ns.BagCount(itemID)
 	return Try(count, itemID, false, false, false, false) or 0
 end
 
+-- A cost: a gain (below zero: the Coin Pouch pays more than the writ and its item) in green with a
+-- "+", a cost as plain money, nothing as a grey "-" (the owner's pick: only gains are coloured).
+function ns.CostText(copper)
+	if not copper or math.abs(copper) < 0.5 then return "|cff9d9d9d-|r" end
+	if copper < 0 then return "|cff1eff00+" .. ns.Money(-copper) .. "|r" end
+	return ns.Money(copper)
+end
+
 -- Gold as text without icons, for chat lines.
 function ns.MoneyPlain(copper)
 	if not copper then return "?" end

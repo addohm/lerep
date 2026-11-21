@@ -22,6 +22,9 @@ change.
   design but missed from 0.1.0.
 - 0.1.0 step 5, tools (2026-11-19): install and release scripts,
   `TESTING.md`. 0.1.0 is built; not yet tried in game.
+- Writ gains in green (2026-11-21, after the owner's first look in game): no
+  more clamping a writ that pays for itself to 0; costs stay white; totals
+  before and after Coin Pouches.
 - 0.9.0-beta released (2026-11-21): the release kit (icon and banner art,
   `LISTING.md`, the zip and the v0.9.0-beta tag); GNU GPLv3, public.
 

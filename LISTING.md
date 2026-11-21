@@ -77,7 +77,8 @@ how many of each, and what it all costs.
 - **The current step:** what to buy or craft (have, buy, cost), where to hand it in, and what it
   gives.
 - **The route:** every step with its rep, Favor and cost; click one to see it, hover for the
-  detail (a writ's price, its item, the Coin Pouch, gold per rep).
+  detail (a writ's price, its item, the Coin Pouch, gold per rep). Writs whose Coin Pouch pays
+  more than they cost show the gain in green.
 - **Totals:** the whole plan's cost and days, and how far the gold you carry goes.
 
 #### Rewards

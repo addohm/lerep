@@ -98,11 +98,12 @@ function Faction.ReceiptFavor()
 end
 
 -- What the Coin Pouch for a writ tier is worth: the average you've opened, else the data's guess.
+-- Also returns whether it's from pouches you opened, and how many.
 local POUCHES = { Journeyman = 284584, Expert = 284585, Artisan = 284586 }
 Faction.POUCHES = POUCHES
 function Faction.PouchValue(tier)
 	if not ns.db.usePouch then return 0 end
 	local seen = ns.adb and ns.adb.seen.pouch[POUCHES[tier] or 0]
-	if seen and seen.n and seen.n > 0 then return seen.total / seen.n, true end
-	return ns.data.coinPouch[tier] or 0, false
+	if seen and seen.n and seen.n > 0 then return seen.total / seen.n, true, seen.n end
+	return ns.data.coinPouch[tier] or 0, false, 0
 end

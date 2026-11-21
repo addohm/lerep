@@ -3,8 +3,10 @@
 --             plus the crates its receipts' Favor needs.
 --   favor:    the Favor goal. Filled crates only, cheapest gold per Favor first.
 --   combined: both at once.
--- Costs are what the items are worth at today's prices (what you hold counts at its price too);
--- the gold you'd actually spend, after what you hold, is the shopping list's total.
+-- Costs are what the items are worth at today's prices (what you hold counts at its price too), less
+-- the Coin Pouches writs pay (plan.pouches: what they add up to); a writ whose pouch pays more than
+-- it and its item costs less than nothing. The gold you'd actually spend, after what you hold and
+-- before any pouch pays you back, is the shopping list's total.
 --
 -- Writs are once a day each. A plan finishes within ns.db.days days (0: no limit): it assumes the
 -- writs on sale today are on sale each day at today's prices, and receipts cover the rest. A
@@ -66,8 +68,10 @@ local function WritLines(price, missing)
 		if today or onSale then
 			local each, how = price(w.item)
 			if each then
-				local cost = (buyout or 0) + each * w.count - ns.Faction.PouchValue(w.tier)
-				lines[#lines + 1] = { id = id, writ = w, cost = math.max(cost, 0), rep = ns.Faction.Rep(w.rep),
+				-- Below zero when the Coin Pouch pays more than the writ and its item: a gain, done first.
+				local pouch = ns.Faction.PouchValue(w.tier)
+				local cost = (buyout or 0) + each * w.count - pouch
+				lines[#lines + 1] = { id = id, writ = w, cost = cost, pouch = pouch, rep = ns.Faction.Rep(w.rep),
 					today = today, later = onSale, held = held, writPrice = buyout, itemPrice = each, itemHow = how }
 			else
 				missing[w.item] = true
@@ -112,7 +116,7 @@ end
 
 local function Work(kind)
 	local db, data = ns.db, ns.data
-	local plan = { kind = kind, steps = {}, missing = {}, rep = 0, favor = 0, cost = 0 }
+	local plan = { kind = kind, steps = {}, missing = {}, rep = 0, favor = 0, cost = 0, pouches = 0 }
 	local camp = ns.Faction.Camp()
 	plan.camp = camp
 	if not camp then
@@ -237,6 +241,7 @@ local function Work(kind)
 			if when == "today" then t.today = 1 else t.later = t.later + 1 end
 			repLeft, gained = repLeft - writ.rep, gained + writ.rep
 			plan.cost = plan.cost + writ.cost
+			plan.pouches = plan.pouches + writ.pouch
 		elseif receiptRate then
 			if not SpendFavor(RF) then break end
 			container.left = container.left - 1

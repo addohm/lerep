@@ -244,7 +244,7 @@ end
 
 local function GoalLine()
 	local plan = ns.Planner.Get("combined")
-	return GREEN .. "Your goal.|r " .. (plan.camp and ("The Combined plan gets you there for " .. ns.Money(plan.cost)
+	return GREEN .. "Your goal.|r " .. (plan.camp and ("The Combined plan gets you there for " .. ns.CostText(plan.cost)
 		.. (plan.days and plan.days > 1 and (" over " .. plan.days .. " days") or "") .. ".") or "")
 end
 

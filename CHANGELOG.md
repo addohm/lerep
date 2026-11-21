@@ -6,6 +6,17 @@ All notable changes to leRep. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- A writ whose Coin Pouch pays more than the writ and its item no longer shows a cost of 0: it
+  shows the gain, in green with a "+", and the plans do the most profitable writs first. Costs
+  stay white (the owner's pick).
+- A writ's tooltip adds up the writ, its item and the Coin Pouch, ending "After the Coin Pouch",
+  and says whether the pouch's value is a guess or the average of the pouches you've opened.
+  Hovering the Cost heading explains the column.
+- The totals give the whole plan after Coin Pouches and before them, so they line up with "To buy
+  today" (what you spend before any pouch pays you back).
+
 ## [0.9.0-beta] - 2026-11-21
 
 The first beta. It hasn't been tried much in game yet: reports are welcome on the CurseForge

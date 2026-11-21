@@ -461,6 +461,39 @@ do
 	ns.db.targetStanding = 6
 end
 
+-- A writ whose Coin Pouch pays more than the writ and its item: a gain, in green, done first.
+do
+	WM.faction, WM.standing, WM.rep, WM.favor = "Alliance", 5, 3000, 0
+	WM.questsDone = { [98247] = true }
+	ns.db.targetStanding, ns.db.days = 6, 1
+	local old1, old2 = WM.auctionator[264014], WM.auctionator[6048]
+	WM.auctionator[264014], WM.auctionator[6048] = 1000, 500 -- 1,500 against a 3,500 pouch (the guess)
+	bump()
+	local plan = ns.Planner.Get("rank")
+	local first = plan.writsToday[1]
+	eq(first.id, 264014, "the paying writ comes first")
+	eq(first.cost, 1000 + 500 - D.coinPouch.Journeyman, "its cost is below zero, not 0")
+	ok(plan.pouches > 0, "the plan adds up its pouches")
+	ns.Window.Select("rank")
+	WM.RunTimers()
+	local panel = ns.Window.CurrentPanel()
+	local stepRow
+	for _, r in ipairs(panel.rows) do
+		if r.step and r.step.key == "writ264014" then stepRow = r end
+	end
+	ok(stepRow and stepRow.cols[3].text:find("^|cff1eff00%+"), "the route shows it in green: " .. tostring(stepRow and stepRow.cols[3].text))
+	ok(panel.totalText.text:find("after Coin Pouches %("), "the totals say before and after pouches: " .. panel.totalText.text)
+	ns.StepTooltip(UIParent, plan.steps[1].kind == "writ" and plan.steps[1] or stepRow.step)
+	local tip = table.concat(GameTooltip.lines, "\n")
+	ok(tip:find("After the Coin Pouch | |cff1eff00%+"), "the tooltip's sum ends in a gain: " .. tip)
+	ok(tip:find("a guess until you've opened some"), "and says the pouch is a guess")
+	eq(ns.CostText(0), "|cff9d9d9d-|r", "nothing is a grey dash")
+	ok(not ns.CostText(2500):find("|c"), "a cost stays plain")
+	WM.auctionator[264014], WM.auctionator[6048] = old1, old2
+	ns.db.days = 7
+	bump()
+end
+
 -- /lerep status and help.
 do
 	WM.printed = {}

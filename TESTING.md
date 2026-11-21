@@ -28,6 +28,10 @@ Scan the auction house with Auctionator first.
 - [ ] Clicking a route row shows it in the step box; hovering shows its detail (for a writ: the
       writ's price, the item's, the Coin Pouch, gold per rep). Shift-click puts its link in chat.
 - [ ] The step box's item rows show have, buy and cost; hovering shows the item's tooltip.
+- [ ] A writ whose Coin Pouch pays more than it and its item shows a green "+" gain in the route
+      and "you make ..." in the box; its tooltip ends "After the Coin Pouch" and says whether the
+      pouch value is a guess. Costs are white. Hovering the Cost heading explains the column.
+- [ ] The totals say "Whole plan: X after Coin Pouches (Y before)".
 - [ ] Writs you've done today drop out of today's steps after the hand-in.
 - [ ] A writ you hold in your bags is planned without buying it.
 - [ ] Holding a Sealed Writ adds an "Open" step; an unread Waylaid Crate adds a "Read the label" step.
