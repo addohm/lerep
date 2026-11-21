@@ -76,6 +76,9 @@ how many of each, and what it all costs.
 - **Your progress:** rep towards the rank, Favor towards the goal.
 - **The current step:** what to buy or craft (have, buy, cost), where to hand it in, and what it
   gives.
+- **Today and Later:** today's steps to do now; then a forecast of the next days' writs (hover
+  it for the writs a day and the day you reach each rank), with any receipts kept for the end.
+  The plan is worked out again each day from that day's writs and prices.
 - **The route:** every step with its rep, Favor and cost; click one to see it, hover for the
   detail (a writ's price, its item, the Coin Pouch, gold per rep). Writs whose Coin Pouch pays
   more than they cost show the gain in green.

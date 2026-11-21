@@ -29,7 +29,11 @@ scan the auction house so leRep has writ, crate and material prices.
   the rank, the Favor goal and how many days to finish in. Each tab shows your
   progress, the current step (what to buy or craft, where to hand it in), and
   the route: every step with the rep or Favor it gives and its cost. Click a
-  step to see it in the box; hover for detail. A writ's cost is the writ plus
+  step to see it in the box; hover for detail. Over several days the route
+  splits into Today (do these now) and Later: a forecast of the next days'
+  writs (hover it for the writs a day and the day you reach each rank), then
+  any receipts, kept for the end in case writs cover more. The plan is worked
+  out again each day: scan the auction house and open leRep. A writ's cost is the writ plus
   its item, less the Coin Pouch it pays; when the pouch pays more, the gain
   shows in green with a "+". The totals say what the plan costs (after and
   before Coin Pouches) and how far the gold you carry goes.

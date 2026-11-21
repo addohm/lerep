@@ -145,6 +145,7 @@ local function Work(kind)
 	end
 	-- Spend Favor: from the bank, then by filling crates (whole crates; extra Favor stays in the
 	-- bank). False if the crates run out.
+	local purpose = "goal" -- what Favor is being earned for: the goal, or receipts (step 3)
 	local function SpendFavor(amount)
 		while bank < amount do
 			local f = NextFill()
@@ -153,6 +154,7 @@ local function Work(kind)
 			local take = math.min(need, supply[f.item].left)
 			supply[f.item].left = supply[f.item].left - take
 			f.units = f.units + take
+			if purpose == "receipts" then f.forReceipts = (f.forReceipts or 0) + take end
 			bank = bank + take * f.favor
 			plan.cost = plan.cost + take * f.unit
 		end
@@ -193,6 +195,7 @@ local function Work(kind)
 		end
 	end
 
+	purpose = "receipts"
 	-- 3. Rep: writs and receipts, cheapest per rep first. Receipts need Friendly, so until then only
 	-- writs count.
 	local lines = WritLines(price, plan.missing)
@@ -337,12 +340,16 @@ local function Steps(plan)
 			rep = l.rep, cost = l.cost, uses = uses })
 	end
 
+	-- On a plan over several days, receipts and the crates filled for their Favor come at the end,
+	-- after the forecast: they cover only what writs leave, and the plan is worked out again daily.
+	local defer = plan.receipts > 0 and #plan.writsLater > 0
 	for _, f in ipairs(plan.fills) do
 		local units = f.units - ((labelFill == f) and 1 or 0)
-		if units > 0 then FillStep(f, units, "fill" .. f.item) end
+		local later = defer and math.min(units, f.forReceipts or 0) or 0
+		if units - later > 0 then FillStep(f, units - later, "fill" .. f.item) end
 	end
 
-	if plan.receipts > 0 then
+	local function ReceiptStep(day)
 		local uses, cost = {}, 0
 		for item, n in pairs(plan.containers) do
 			table.insert(uses, { item, n })
@@ -350,23 +357,69 @@ local function Steps(plan)
 		end
 		table.sort(uses, function(a, b) return a[2] > b[2] end)
 		local container = uses[1] and ns.ItemName(uses[1][1]) or "Waylaid Crate"
-		Add({ key = "receipts", kind = "receipt", icon = data.receipt.item, day = "today",
-			title = ("Return %d empty crates with Forged Delivery Receipts"):format(plan.receipts),
-			detail = ("Buy %d receipts (%d Favor each) from %s; put one on each empty crate (%s%s) and hand it in at %s."):format(
-				plan.receipts, plan.receiptFavor, camp.scribe.name, container, #uses > 1 and " and others" or "", camp.intake.name),
+		Add({ key = "receipts", kind = "receipt", icon = data.receipt.item, day = day,
+			title = (day == "end" and "At the end, if still short: return %d crates with receipts"
+				or "Return %d empty crates with Forged Delivery Receipts"):format(plan.receipts),
+			detail = ("Buy %d receipts (%d Favor each) from %s; put one on each empty crate (%s%s) and hand it in at %s.%s"):format(
+				plan.receipts, plan.receiptFavor, camp.scribe.name, container, #uses > 1 and " and others" or "", camp.intake.name,
+				day == "end" and " The plan is worked out again each day, so by then writs may have covered more." or ""),
 			where = Where(camp.scribe, camp), rep = ns.Faction.Rep(data.receipt.rep) * plan.receipts,
 			favor = -plan.receipts * plan.receiptFavor, cost = cost, uses = uses })
 	end
+	if plan.receipts > 0 and not defer then ReceiptStep("today") end
 
 	if #plan.writsLater > 0 then
 		local rep, cost, n = 0, 0, 0
 		for _, x in ipairs(plan.writsLater) do
 			rep, cost, n = rep + x.line.rep * x.copies, cost + x.line.cost * x.copies, n + x.copies
 		end
+		-- The forecast, day by day: day 1 is today's steps; on day d each writ with at least d - 1
+		-- later copies is done once more. Note the day each rank up to the target is reached.
+		local T, target = ns.Faction.THRESHOLDS, ns.db.targetStanding or 8
+		local total = plan.value or 0
+		for _, s in ipairs(steps) do total = total + (s.rep or 0) end
+		local reach = {}
+		local function Check(day)
+			for st = 5, target do
+				if not reach[st] and (plan.value or 0) < T[st] and total >= T[st] then reach[st] = day end
+			end
+		end
+		Check(1)
+		local perDay = { writs = 0, rep = 0 }
+		for d = 2, plan.days do
+			local add, count = 0, 0
+			for _, x in ipairs(plan.writsLater) do
+				if x.copies >= d - 1 then add, count = add + x.line.rep, count + 1 end
+			end
+			if d == 2 then perDay.writs, perDay.rep = count, add end
+			total = total + add
+			Check(d)
+		end
+		if defer then
+			total = total + ns.Faction.Rep(data.receipt.rep) * plan.receipts
+			Check("end")
+		end
+		local ranks = {}
+		for st = 5, target do
+			if reach[st] then ranks[#ranks + 1] = { standing = st, day = reach[st] } end
+		end
 		Add({ key = "later", kind = "later", icon = plan.writsLater[1].line.id, day = "later",
 			title = ("Days 2 to %d: %d more writs"):format(plan.days, n),
 			detail = "The same writs each day, if they're on sale at today's prices (an estimate).",
-			rep = rep, cost = cost, uses = {} })
+			rep = rep, cost = cost, uses = {}, perDay = perDay, reach = ranks })
+	end
+
+	if defer then
+		for _, f in ipairs(plan.fills) do
+			local units = f.units - ((labelFill == f) and 1 or 0)
+			local later = math.min(units, f.forReceipts or 0)
+			if later > 0 then
+				local s = FillStep(f, later, "endfill" .. f.item, "For the receipts' Favor.")
+				s.day = "end"
+				s.title = "At the end: " .. s.title
+			end
+		end
+		ReceiptStep("end")
 	end
 	return steps
 end

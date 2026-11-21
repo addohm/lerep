@@ -32,6 +32,11 @@ Scan the auction house with Auctionator first.
       and "you make ..." in the box; its tooltip ends "After the Coin Pouch" and says whether the
       pouch value is a guess. Costs are white. Hovering the Cost heading explains the column.
 - [ ] The totals say "Whole plan: X after Coin Pouches (Y before)".
+- [ ] On a plan over several days the route has "Today" and "Later" headings; receipts and the
+      crates for their Favor come after the forecast as "At the end, if still short", and aren't on
+      the Shopping tab. On a one-day plan they're today steps.
+- [ ] The forecast row's tooltip gives the writs a day, the rep a day and the day each rank is
+      reached. The next day, after the reset and a scan, the route shows that day's writs.
 - [ ] Writs you've done today drop out of today's steps after the hand-in.
 - [ ] A writ you hold in your bags is planned without buying it.
 - [ ] Holding a Sealed Writ adds an "Open" step; an unread Waylaid Crate adds a "Read the label" step.

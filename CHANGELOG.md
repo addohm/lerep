@@ -8,6 +8,12 @@ All notable changes to leRep. The format follows
 
 ### Changed
 
+- On a plan over several days, receipts (and the crates filled for their Favor) come at the end,
+  after the forecast, as "At the end, if still short": they only cover what writs leave, and the
+  plan is worked out again each day. On a one-day plan they stay a today step.
+- The route has two headings on a multi-day plan: Today, and Later (the forecast).
+- The forecast row's tooltip gives the writs a day, the rep a day, and the day you'd reach each
+  rank.
 - A writ whose Coin Pouch pays more than the writ and its item no longer shows a cost of 0: it
   shows the gain, in green with a "+", and the plans do the most profitable writs first. Costs
   stay white (the owner's pick).

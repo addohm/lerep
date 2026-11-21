@@ -494,6 +494,57 @@ do
 	bump()
 end
 
+-- A plan over several days: receipts (and the crates for their Favor) come at the end, after the
+-- forecast; the forecast says the writs a day and when each rank is reached; the route has
+-- Today and Later headings. On a one-day plan receipts are a today step.
+do
+	WM.faction, WM.standing, WM.rep, WM.favor = "Alliance", 5, 3000, 0
+	WM.questsDone = { [98247] = true }
+	ns.db.targetStanding, ns.db.days = 6, 7
+	ns.Choices.SetGoal(0)
+	ns.db.favorGoal = 100
+	WM.auctionator[264014], WM.auctionator[6048] = 10000, 20000
+	bump()
+	local plan = ns.Planner.Get("combined")
+	local keys, at = {}, {}
+	for i, s in ipairs(plan.steps) do keys[#keys + 1] = s.key .. ":" .. s.day at[s.key] = i end
+	local k = table.concat(keys, " ")
+	ok(at.receipts and at.later and at.receipts > at.later, "receipts after the forecast: " .. k)
+	eq(plan.steps[at.receipts].day, "end", "receipts at the end")
+	ok(plan.steps[at.receipts].title:find("^At the end, if still short"), "and say so")
+	ok(at.fill248683 and plan.steps[at.fill248683].day == "today", "the goal's ore crates are today: " .. k)
+	ok(at.endfill248682 and plan.steps[at.endfill248682].day == "end", "the receipts' herb crates are at the end: " .. k)
+	eq(plan.steps[at.fill248682].title:match("Fill (%d+)"), "10", "only the goal's herb crates today")
+	for _, r in ipairs(plan.shopping) do
+		ok(r.itemID ~= 248682 or r.need == 10, "shopping buys only today's herb crates")
+	end
+	local later = plan.steps[at.later]
+	eq(later.perDay.writs, 2, "two writs a day")
+	eq(later.perDay.rep, 150, "150 rep a day")
+	eq(#later.reach, 1, "one rank to reach")
+	eq(later.reach[1].day, "end", "Honored at the end, with receipts")
+	ns.StepTooltip(UIParent, later)
+	local tip = table.concat(GameTooltip.lines, "\n")
+	ok(tip:find("Writs a day | 2 %(%+150 rep%)") and tip:find("Honored | at the end"), "the forecast tooltip: " .. tip)
+	ns.Window.Select("combined")
+	WM.RunTimers()
+	local heads = {}
+	for _, r in ipairs(ns.Window.CurrentPanel().rows) do
+		if r:IsShown() and not r.step then heads[#heads + 1] = r.name.text end
+	end
+	local h = table.concat(heads, "|")
+	ok(h:find("Today") and h:find("Later"), "Today and Later headings: " .. h)
+	-- One day: receipts are today, and no headings.
+	ns.db.days = 1
+	bump()
+	plan = ns.Planner.Get("combined")
+	local r
+	for _, s in ipairs(plan.steps) do if s.key == "receipts" then r = s end end
+	ok(r and r.day == "today", "one-day plan: receipts today")
+	ns.db.days, ns.db.favorGoal = 7, 0
+	bump()
+end
+
 -- /lerep status and help.
 do
 	WM.printed = {}

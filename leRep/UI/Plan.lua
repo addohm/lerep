@@ -83,6 +83,16 @@ local function StepTooltip(owner, s)
 	elseif s.cost then
 		GameTooltip:AddDoubleLine("Cost", ns.CostText(s.cost), 1, 0.82, 0, 1, 1, 1)
 	end
+	if s.perDay then
+		-- The forecast: a day's writs, and the day each rank is reached.
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddDoubleLine("Writs a day", ("%d (+%s rep)"):format(s.perDay.writs, Number(s.perDay.rep)), 1, 0.82, 0, 1, 1, 1)
+		for _, r in ipairs(s.reach or {}) do
+			GameTooltip:AddDoubleLine(ns.Faction.StandingName(r.standing),
+				r.day == "end" and "at the end, with receipts" or ("on day " .. r.day), 1, 0.82, 0, 1, 1, 1)
+		end
+		GameTooltip:AddLine("Each day, scan the auction house and open leRep: the plan is worked out again from that day's writs and prices.", 0.7, 0.7, 0.7, true)
+	end
 	GameTooltip:Show()
 end
 ns.StepTooltip = StepTooltip
@@ -385,24 +395,51 @@ local function MakePage(kind)
 			end
 		end
 
-		-- The route.
+		-- The route. A plan over several days gets two headings: Today (what to do now) and Later
+		-- (the forecast, then what's left for the end).
+		local entries, split = {}, false
+		for _, s in ipairs(steps) do
+			if s.day ~= "today" then split = true end
+		end
+		local group
+		for _, s in ipairs(steps) do
+			local g = s.day == "today" and "Today" or "Later"
+			if split and g ~= group then
+				entries[#entries + 1] = { heading = g == "Today" and "Today" or "Later: a forecast, worked out again each day" }
+				group = g
+			end
+			entries[#entries + 1] = { step = s }
+		end
 		local y = 0
-		for i, s in ipairs(steps) do
+		for i, e in ipairs(entries) do
 			local r = RouteRow(i)
+			local s = e.step
 			r.step = s
-			r.icon:SetTexture(ns.ItemIcon(s.icon))
-			r.name:SetText((s.day == "later" and GREY or "") .. s.title .. (s.day == "later" and "|r" or ""))
-			r.cols[1]:SetText((s.rep and s.rep ~= 0) and Number(s.rep) or (GREY .. "-|r"))
-			r.cols[2]:SetText((s.favor and s.favor ~= 0) and ((s.favor < 0 and ORANGE or "") .. Number(s.favor)) or (GREY .. "-|r"))
-			r.cols[3]:SetText(ns.CostText(s.cost))
-			r.highlight:SetShown(s.key == selected)
+			r.icon:SetShown(s ~= nil)
+			r.name:ClearAllPoints()
+			r.name:SetPoint("RIGHT", r, "RIGHT", -(3 * COL_W + 4), 0)
+			if s then
+				r.name:SetPoint("LEFT", 26, 0)
+				r.icon:SetTexture(ns.ItemIcon(s.icon))
+				local grey = s.day ~= "today"
+				r.name:SetText((grey and GREY or "") .. s.title .. (grey and "|r" or ""))
+				r.cols[1]:SetText((s.rep and s.rep ~= 0) and Number(s.rep) or (GREY .. "-|r"))
+				r.cols[2]:SetText((s.favor and s.favor ~= 0) and ((s.favor < 0 and ORANGE or "") .. Number(s.favor)) or (GREY .. "-|r"))
+				r.cols[3]:SetText(ns.CostText(s.cost))
+				r.highlight:SetShown(s.key == selected)
+			else
+				r.name:SetPoint("LEFT", 4, 0)
+				r.name:SetText(GOLD .. e.heading .. "|r")
+				for c = 1, 3 do r.cols[c]:SetText("") end
+				r.highlight:Hide()
+			end
 			r:ClearAllPoints()
 			r:SetPoint("TOPLEFT", routeInner, "TOPLEFT", 0, -y)
 			r:SetPoint("RIGHT", routeInner, "RIGHT")
 			r:Show()
 			y = y + ROW_H
 		end
-		for i = #steps + 1, #rows do rows[i]:Hide() end
+		for i = #entries + 1, #rows do rows[i]:Hide() end
 		routeInner:SetHeight(math.max(1, y))
 
 		-- Totals and warnings.

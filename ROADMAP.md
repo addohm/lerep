@@ -22,6 +22,10 @@ change.
   design but missed from 0.1.0.
 - 0.1.0 step 5, tools (2026-11-19): install and release scripts,
   `TESTING.md`. 0.1.0 is built; not yet tried in game.
+- Today and Later (2026-11-21, the owner asked what tomorrow's route looks
+  like): receipts and their crates go at the end of a multi-day plan, the
+  route has Today/Later headings, and the forecast's tooltip gives the writs
+  a day and the day each rank is reached.
 - Writ gains in green (2026-11-21, after the owner's first look in game): no
   more clamping a writ that pays for itself to 0; costs stay white; totals
   before and after Coin Pouches.
@@ -94,7 +98,9 @@ Saved per character.
   7, 14, 30 or no limit; 7 by default; the owner's pick, 2026-11-19): today's
   steps use the writs on sale at your last scan (each once), later days
   assume the same writs at today's prices (an estimate), and receipts cover
-  what writs can't in that time.
+  what writs can't in that time. On a multi-day plan the receipts (and the
+  crates for their Favor) come at the end, after the forecast: the plan is
+  worked out again each day.
 - Crates on sale: Auctionator's count at the last scan when it has one,
   else as many as needed at today's price. Receipts use the cheapest empty
   crate.
