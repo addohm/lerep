@@ -2,7 +2,8 @@
 ## Title: leRep
 ## Notes: The cheapest gold path to rep and Merchant's Favor with the Azeroth Commerce Authority or Durotar Supply and Logistics: which writs to buy, which crates to fill, and what it costs.
 ## Author: addohm
-## Version: 0.1.0
+## Version: 0.9.0-beta
+## IconTexture: Interface\AddOns\leRep\Media\Icon
 ## SavedVariables: leRepDB
 ## SavedVariablesPerCharacter: leRepCharDB
 ## OptionalDeps: Auctionator, TradeSkillMaster

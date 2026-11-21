@@ -3,7 +3,7 @@
 -- ns.adb).
 local ADDON, ns = ...
 
-ns.ICON = "Interface\\Icons\\INV_Misc_Note_02" -- a stock icon until leRep has its own art
+ns.ICON = "Interface\\AddOns\\leRep\\Media\\Icon" -- art/make_logo.py
 
 local DEFAULTS = {
 	targetStanding = 8,  -- the rank the plans aim for: 5 Friendly, 6 Honored, 7 Revered, 8 Exalted

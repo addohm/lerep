@@ -8,7 +8,7 @@ A WoW: Forever addon (Lua, interface 16001) that plans the cheapest gold path
 to a rank and an amount of Merchant's Favor with the trade factions (Azeroth
 Commerce Authority / Durotar Supply and Logistics). A sibling of leprofit
 (`addohm/leprofit`): same stack, look, tools and release pattern. The agreed
-design is in ROADMAP.md; 0.1.0 is built, not yet tried in game. The remote is `addohm/lerep` on GitHub
+design is in ROADMAP.md; 0.9.0-beta is released (the first beta), little tried in game. GPLv3, public. The remote is `addohm/lerep` on GitHub
 (pushed via the `deploy-ws-LeRep` deploy key); releases go to CurseForge and
 Wago.
 
@@ -49,6 +49,11 @@ Discuss each feature with the owner before building it.
   (Windows install, from leprofit's, with the rewritten-history check);
   `make_release.py` (the release zip)
 - `TESTING.md`: the in-game checklist
+- `LISTING.md`: the CurseForge and Wago page text and release notes
+- `art/`: `make_logo.py` draws the icons, the banner and `leRep/Media/Icon.tga`
+  (the in-game icon); the PNGs it makes (fonts from `.scratch/fonts/`)
+- `release/`: the release zips, one per version
+- `LICENSE`: GNU GPLv3 (repo only; release zips carry none)
 - `.source/` (git-ignored): the downloaded game data (wago.tools CSVs) and
   Efficient Games' player data (`eg/`).
 - `README.md`, `CHANGELOG.md`, `DEPLOY.md`, `SECURITY.md`, `ROADMAP.md`: the

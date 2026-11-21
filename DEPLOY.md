@@ -1,8 +1,9 @@
 # Deploying leRep
 
 leRep is a World of Warcraft addon: it runs inside the game client (WoW:
-Forever, Interface 16001), and there's no server. Releases will be published
-on CurseForge and Wago, like leprofit's. Nothing is built yet.
+Forever, Interface 16001), and there's no server. Releases are published on
+both CurseForge and Wago, from `release/` with the text and images in
+`LISTING.md`. The source is public on GitHub under the GNU GPLv3.
 
 ## First-time setup
 
@@ -26,8 +27,10 @@ To install by hand instead, copy the `leRep` folder (not the repo root) into
 4. For a release: bump `## Version` in `leRep/leRep.toc`, move the CHANGELOG's Unreleased entries
    under the new version, and commit. Then `python3 tools/make_release.py` writes
    `release/leRep-<version>.zip` from the last commit (it refuses if `leRep/` has uncommitted
-   changes); commit the zip, tag (`git tag v0.1.0`) and push with `--tags`. Upload the zip to
-   CurseForge and to Wago.
+   changes); commit the zip, tag (`git tag v0.9.0-beta`) and push with `--tags`. Upload the zip to
+   CurseForge and to Wago, each with `LISTING.md`'s release notes; the summary, description,
+   categories and images are there too. If the icon changed, `python3 art/make_logo.py` redraws
+   it (and `leRep/Media/Icon.tga`).
 
 ## The install script
 

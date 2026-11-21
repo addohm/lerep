@@ -6,40 +6,37 @@ All notable changes to leRep. The format follows
 
 ## [Unreleased]
 
+## [0.9.0-beta] - 2026-11-21
+
+The first beta. It hasn't been tried much in game yet: reports are welcome on the CurseForge
+issues page.
+
 ### Added
 
-- Standard docs: README, CLAUDE, CHANGELOG, DEPLOY, SECURITY and ROADMAP (2026-11-19).
-- Docs filled in with what's known so far, with TODO questions (2026-11-19).
-- The agreed design in ROADMAP.md: Rank, Favor and Combined plans (2026-11-19).
-- The data: `tools/fetch_sources.py` and `tools/gen_data.py` build
-  `leRep/Data.lua` from Forever's game data and Efficient Games' player data:
-  150 writs, 30 crates with their bundles, 218 recipes behind writ items and
-  crafted bundles, vendor prices, Favor rewards and goals, the camps.
-- The core: settings, Auctionator/TSM and vendor prices (from leprofit),
-  your standing, Favor, Shipping Label and today's writs, and a recorder
-  that learns the receipt's price, your rep bonus, what each kind of crate
-  pays and what Coin Pouches hold. `/lerep status`. Tests with a fake game
-  client.
-- The planner: Rank, Favor and Combined plans, cheapest gold per rep and per
-  Favor, finishing within a number of days (7 by default); writ items and
-  crafted bundles at the cheaper of buying and crafting; the steps and
-  today's shopping list.
-- The window: Rank, Favor and Combined tabs (targets, progress, the current
-  step and the route), Shopping with Send to Auctionator, Options; a minimap
-  button and the addon menu entry; step alerts in chat.
-- Rewards: your own professions' recipe lists open by themselves; recipes you
-  know (or hold the pattern for) are marked and listed last; "All" on a
-  profession makes every recipe of it you don't have yet the Favor goal,
-  shrinking as you learn them.
-- Each plan's totals say how far your gold goes: the whole plan, or the rep
-  (and Favor) it gets you to and how much you're short.
-- The Rewards tab: what Merchant's Favor buys, grouped by the rank each
-  reward needs (marked "?" where only guides give the rank), then any rank,
-  then recipes by profession; who sells each. Clicking a reward makes it your
-  Favor goal and raises the target rank when it needs more.
-- The addon is called leRep (folder, title, saved settings `leRepDB` and
-  `leRepCharDB`); the repo is `addohm/lerep`. The install script removes an
-  installed `LeRep` or `Lerep` folder from earlier builds.
-- Tools: `tools/install_forever.cmd` (Windows install) and
-  `tools/make_release.py` (the release zip); `TESTING.md`, the in-game
-  checklist.
+- **Three plans** for your side's trade faction (Azeroth Commerce Authority or Durotar Supply and
+  Logistics), each the cheapest gold path to its targets:
+  - **Rank:** to a rank, with Craftsman's Writs, the Shipping Label and crate returns with Forged
+    Delivery Receipts, cheapest gold per rep first.
+  - **Favor:** Merchant's Favor for a reward, by filling Waylaid Crates, cheapest gold per Favor
+    first.
+  - **Combined:** both at once; receipts are priced at what their Favor costs after your Favor
+    goal.
+  - Writs are once a day each: a plan finishes within the days you pick (7 by default), with
+    receipts for what writs can't cover in that time.
+  - Writ items and crafted crate bundles cost the cheaper of buying and crafting them with
+    recipes you know.
+- **Each plan tab:** your rep and Favor, the current step (what to buy or craft, where to hand it
+  in, what it gives), the route with every step's rep, Favor and cost, the whole plan's cost and
+  days, and how far the gold you carry goes.
+- **Rewards:** what Favor buys, grouped by the rank it needs, then recipes by profession (yours
+  open, recipes you know marked); click one to make it your goal, or press All for every recipe
+  of a profession you don't have yet.
+- **Shopping:** what today's steps need, less what you hold, with Send to Auctionator.
+- **Options:** targets, your Legacy perks (Diplomat, Performance Bonus), when a writ counts as on
+  sale, the Coin Pouch, step alerts.
+- **It learns as you play:** the recipes you know, the receipt's Favor price at the scribe, your
+  rep bonus, what each kind of crate pays and what Coin Pouches hold.
+- `/lerep`, `/lerep status`, `/lerep help`; a minimap button and the addon menu entry.
+- Built-in data from Forever's game files and Efficient Games' player data (CC BY 4.0): 150
+  writs, 30 crates, the recipes behind writ items, Favor rewards with their ranks and sellers.
+- Open source under the GNU GPLv3.

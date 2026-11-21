@@ -6,7 +6,7 @@ the Azeroth Commerce Authority (Alliance) and Durotar Supply and Logistics
 (Horde). It tells you which writs to buy, which crates to fill, how many, and
 what it all costs, using your auction house prices.
 
-Status: 0.1.0, built and not yet tried in game ([TESTING.md](TESTING.md) is the checklist). The agreed design is in
+Status: 0.9.0-beta, the first beta; little tried in game yet ([TESTING.md](TESTING.md) is the checklist). Open source under the GNU GPLv3 (`LICENSE`). The agreed design is in
 [ROADMAP.md](ROADMAP.md).
 
 ## Getting started

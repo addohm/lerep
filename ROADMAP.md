@@ -22,12 +22,13 @@ change.
   design but missed from 0.1.0.
 - 0.1.0 step 5, tools (2026-11-19): install and release scripts,
   `TESTING.md`. 0.1.0 is built; not yet tried in game.
+- 0.9.0-beta released (2026-11-21): the release kit (icon and banner art,
+  `LISTING.md`, the zip and the v0.9.0-beta tag); GNU GPLv3, public.
 
 ## Next
 
-1. In-game test of 0.1.0 (`TESTING.md`).
-2. The release kit: icon and banner art, `LISTING.md`, a tagged zip; publish
-   on CurseForge and Wago.
+1. Fixes from the in-game test and players' reports (`TESTING.md`).
+2. 1.0.0 once it's been tried in game.
 
 ## Ideas
 
